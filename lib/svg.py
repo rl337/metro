@@ -13,7 +13,19 @@ class SVG:
 
     def style(self, name, style):
         self.styles[name] = style
-    
+
+    def line(self, p1, p2, style='.Default'):
+        self.shapes.append(Line(p1, p2, style))
+
+    def polyline(self, points=[], style='.Default'):
+        self.shapes.append(Polyline(points, style))
+
+    def circle(self, x, y, r, style='.Default'):
+        self.shapes.append(Circle(x, y, r, style))
+       
+    def rect(self, x, y, w, h, style='.Default'):
+        self.shapes.append(Rect(x, y, w, h, style))
+
     def __str__(self):
         title = ''
         if self.title is not None:
@@ -63,7 +75,6 @@ class SVGObj:
         if isinstance(self.style, Style):
             return ' '.join(['%s="%s"' % (x, self.style.attribs[x]) for x in self.style.attribs])
             
-
 class Rect(SVGObj):
     def __init__(self, x, y, w, h, style='.Default'):
         SVGObj.__init__(self, style)
