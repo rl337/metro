@@ -1,0 +1,32 @@
+Management, except farm managers	5.33%	3.24%	C	LMH
+Business operations specialists	0.96%	1.13%	C	LMH
+Financial specialists	1.01%	1.18%	C	H
+Computer & mathematical	1.71%	0.73%	S	H
+Architects, surveyors, cartographers, & engineers	1.31%	0.17%	S	H
+Drafters, engineering, & mapping technicians	0.46%	0.10%	S	H
+Life, physical, & social science	0.55%	0.38%	C	LM
+Community & social services	0.61%	0.90%	C	L
+Legal	0.58%	0.51%	C	LMH
+Education, training, & library	1.49%	4.17%	C	LM
+Arts, design, entertainment, sports, & media	1.00%	0.91%	C	L
+Health diagnosing, treating practitioners, & technical operations	0.93%	2.26%	S	H
+Health technologists & technicians	0.28%	1.13%	S	H
+Healthcare support	0.24%	1.76%	S	H
+Fire fighting, prevention & law enforcement, including supervisors	1.00%	0.18%	RCIR	LMH
+Other protective service workers, including supervisors	0.57%	0.21%	C	M
+Food preparation & serving related occupations	2.05%	2.77%	RCR	LMH
+Building & grounds cleaning & maintenance	1.98%	1.30%	IC	LMH
+Personal care & service	0.59%	2.20%	RC	
+Sales & related occupations	5.68%	5.57%	C	LMH
+Office & administrative support	3.84%	11.60%	CIS	LMH
+Farming, fishing, & forestry occupations	1.09%	0.29%	I	L
+Supervisors, construction & extraction	0.68%	0.02%	I	L
+Construction trades	4.57%	0.14%	I	LM
+Extraction	0.09%	0.00%	I	L
+Installation, maintenance, & repair	3.75%	0.19%	C	LMH
+Production	5.73%	2.75%	I	MH
+Supervisors, transportation & material moving	0.15%	0.03%	I	LM
+Aircraft & traffic control	0.11%	0.01%	I	L
+Motor vehicle operators	2.62%	0.35%	I	L
+Rail, water & other transportation	0.27%	0.04%	I	MH
+Material moving	2.02%	0.53%	I	H
