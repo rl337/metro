@@ -1,5 +1,5 @@
-import metro
+import population
 
-m = metro.PopulationModel()
+m = population.PopulationModel()
 print m
 
