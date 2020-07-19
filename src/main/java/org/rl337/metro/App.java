@@ -4,15 +4,14 @@
 package org.rl337.metro;
 
 
+import org.rl337.metro.model.Color;
 import org.rl337.metro.model.Point2D;
-import org.rl337.metro.model.Shape;
+import org.rl337.metro.model.ThingStack;
 import org.rl337.metro.model.shapes.Circle;
-import org.rl337.metro.model.shapes.Rectangle;
+import org.rl337.metro.model.things.SimpleThing;
+import org.rl337.metro.model.things.Thing;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class App {
@@ -21,15 +20,21 @@ public class App {
 
         Renderer renderer = new Renderer(1024, 768);
 
-        ArrayList<Shape> shapeList = new ArrayList<>();
+        List<Thing> thingList = new ArrayList<>();
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
 
-                shapeList.add(new Circle(new Point2D(10 + 100 * x, 10 + 100 * y), 5));
+                thingList.add(
+                    new SimpleThing(
+                        new Circle(new Point2D(10 + 100 * x, 10 + 100 * y), 5),
+                        Color.White,
+                        0
+                    )
+                );
             }
         }
-
-        renderer.render(shapeList, Color.RED);
+        ThingStack shapeList = new ThingStack(thingList);
+        renderer.render(shapeList);
         renderer.show();
     }
 

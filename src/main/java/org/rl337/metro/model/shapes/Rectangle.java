@@ -10,9 +10,6 @@ public class Rectangle extends AbstractShape {
 
     @Override
     public boolean contains(Point2D point) {
-        return point.getX() >= this.position.getX() &&
-                point.getX() <= ( this.position.getX() + this.width) &&
-                point.getY() >= this.position.getY() &&
-                point.getY() <= ( this.position.getY() + this.height);
+        return isInBound(point);
     }
 }

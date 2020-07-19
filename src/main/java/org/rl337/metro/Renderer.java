@@ -1,8 +1,8 @@
 package org.rl337.metro;
 
 import org.rl337.metro.model.Point2D;
-import org.rl337.metro.model.Shape;
-import org.rl337.metro.model.shapes.CompositeShape;
+import org.rl337.metro.model.ThingStack;
+import org.rl337.metro.model.things.Thing;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,25 +23,24 @@ public class Renderer {
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
     }
 
-    public void render(List<Shape> shapes, Color color) {
-        CompositeShape landscape = new CompositeShape(shapes);
-
-        double xScale = landscape.getWidth() / image.getWidth();
-        double yScale = landscape.getHeight() / image.getHeight();
+    public void render(ThingStack shapes) {
+        double xScale = shapes.getWidth() / image.getWidth();
+        double yScale = shapes.getHeight() / image.getHeight();
 
         double scale = Math.max(xScale, yScale);
 
         Graphics g2d = image.getGraphics();
-        g2d.setColor(color);
 
-        double minX = landscape.getPosition().getX();
-        double minY = landscape.getPosition().getY();
+        double minX = shapes.getUpperLeft().getX();
+        double minY = shapes.getUpperLeft().getY();
 
+        List<Thing> thingList = shapes.getThingList();
         for (double x = 0; x < image.getWidth(); x++) {
             for (double y = 0; y < image.getHeight(); y++) {
                 Point2D point = new Point2D(x * scale + minX, y * scale + minY);
-                for (Shape s : shapes) {
-                    if (s.contains(point)) {
+                for (Thing thing : thingList) {
+                    if (thing.contains(point)) {
+                        g2d.setColor(thing.getColor().asAWTColor());
                         g2d.drawRect((int) x, (int) y, 1, 1);
                     }
                 }

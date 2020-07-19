@@ -2,8 +2,9 @@ package org.rl337.metro.model;
 
 import org.junit.jupiter.api.Test;
 import org.rl337.metro.model.shapes.Circle;
-import org.rl337.metro.model.shapes.CompositeShape;
+import org.rl337.metro.model.shapes.Group;
 import org.rl337.metro.model.shapes.Rectangle;
+import org.rl337.metro.model.shapes.Shape;
 
 
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class TestShapes {
         Shape rectangle1 = new Rectangle(Point2D.Origin, 10, 10);
         Shape rectangle2 = new Rectangle(new Point2D(100, 100), 10, 10);
 
-        Shape compositeShape = new CompositeShape(Arrays.asList(rectangle1, rectangle2));
+        Shape compositeShape = new Group(Arrays.asList(rectangle1, rectangle2));
         assertEquals(compositeShape.getWidth(), 110.0);
         assertEquals(compositeShape.getHeight(), 110.0);
 
