@@ -3,6 +3,7 @@ import random
 import json
 from metro.city import City
 from metro.population import PopulationModel
+from metro.model import CityModel, Workforce, Zone, Occupation, HistogramEntry
 
 def generate(
     population: int = typer.Option(100000, help="The population of the city."),
@@ -24,17 +25,18 @@ def generate(
     city = City(p=population)
     population_model = PopulationModel(p=population, r=rng)
 
-    # Save the city configuration to a file.
-    city_data = {
-        "population": city.population,
-        "seed": seed,
-        "workforce": population_model.workforce(),
-        "zones": population_model.zones,
-        "occupations": population_model.occupations,
-        "histogram": population_model.histogram,
-    }
+    # Create the CityModel instance
+    city_model = CityModel(
+        population=city.population,
+        seed=seed,
+        workforce=Workforce(**population_model.workforce()),
+        zones={name: Zone(**data) for name, data in population_model.zones.items()},
+        occupations={name: Occupation(**data) for name, data in population_model.occupations.items()},
+        histogram=[HistogramEntry(**entry) for entry in population_model.histogram],
+    )
 
+    # Save the city configuration to a file.
     with open(output_file, "w") as f:
-        json.dump(city_data, f, indent=2)
+        f.write(city_model.model_dump_json(indent=2))
 
     print(f"City configuration saved to {output_file}.")
