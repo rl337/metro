@@ -1,0 +1,239 @@
+{
+  "population": 100000,
+  "seed": 3934040640,
+  "workforce": {
+    "m": 30352,
+    "f": 29700,
+    "t": 60052
+  },
+  "zones": {
+    "C": {
+      "L": 18503.8964,
+      "M": 17713.0356,
+      "H": 16164.1436
+    },
+    "S": {
+      "L": 4610.7168,
+      "M": 4610.7168,
+      "H": 7933.6204
+    },
+    "R": {
+      "L": 3603.772,
+      "M": 3603.772,
+      "H": 3603.772
+    },
+    "I": {
+      "L": 9030.017600000001,
+      "M": 10087.6208,
+      "H": 9375.036800000002
+    }
+  },
+  "occupations": {
+    "Management, except farm managers": {
+      "m": 1617.7616,
+      "f": 962.2800000000002
+    },
+    "Business operations specialists": {
+      "m": 291.37919999999997,
+      "f": 335.60999999999996
+    },
+    "Financial specialists": {
+      "m": 306.5552,
+      "f": 350.46
+    },
+    "Computer & mathematical": {
+      "m": 519.0192000000001,
+      "f": 216.81
+    },
+    "Architects, surveyors, cartographers, & engineers": {
+      "m": 397.6112,
+      "f": 50.49
+    },
+    "Drafters, engineering, & mapping technicians": {
+      "m": 139.6192,
+      "f": 29.7
+    },
+    "Life, physical, & social science": {
+      "m": 166.936,
+      "f": 112.86
+    },
+    "Community & social services": {
+      "m": 185.1472,
+      "f": 267.3
+    },
+    "Legal": {
+      "m": 176.0416,
+      "f": 151.47
+    },
+    "Education, training, & library": {
+      "m": 452.2448,
+      "f": 1238.49
+    },
+    "Arts, design, entertainment, sports, & media": {
+      "m": 303.52,
+      "f": 270.27000000000004
+    },
+    "Health diagnosing, treating practitioners, & technical operations": {
+      "m": 282.27360000000004,
+      "f": 671.2199999999999
+    },
+    "Health technologists & technicians": {
+      "m": 84.98560000000002,
+      "f": 335.60999999999996
+    },
+    "Healthcare support": {
+      "m": 72.84479999999999,
+      "f": 522.72
+    },
+    "Fire fighting, prevention & law enforcement, including supervisors": {
+      "m": 303.52,
+      "f": 53.46
+    },
+    "Other protective service workers, including supervisors": {
+      "m": 173.00639999999999,
+      "f": 62.37
+    },
+    "Food preparation & serving related occupations": {
+      "m": 622.2159999999999,
+      "f": 822.69
+    },
+    "Building & grounds cleaning & maintenance": {
+      "m": 600.9696,
+      "f": 386.1
+    },
+    "Sales & related occupations": {
+      "m": 1723.9935999999998,
+      "f": 1654.2900000000002
+    },
+    "Office & administrative support": {
+      "m": 1165.5167999999999,
+      "f": 3445.2
+    },
+    "Farming, fishing, & forestry occupations": {
+      "m": 330.83680000000004,
+      "f": 86.13
+    },
+    "Supervisors, construction & extraction": {
+      "m": 206.39360000000002,
+      "f": 5.94
+    },
+    "Construction trades": {
+      "m": 1387.0864000000001,
+      "f": 41.580000000000005
+    },
+    "Extraction": {
+      "m": 27.3168,
+      "f": 0.0
+    },
+    "Installation, maintenance, & repair": {
+      "m": 1138.2,
+      "f": 56.43
+    },
+    "Production": {
+      "m": 1739.1696000000002,
+      "f": 816.75
+    },
+    "Supervisors, transportation & material moving": {
+      "m": 45.528,
+      "f": 8.909999999999998
+    },
+    "Aircraft & traffic control": {
+      "m": 33.3872,
+      "f": 2.97
+    },
+    "Motor vehicle operators": {
+      "m": 795.2224,
+      "f": 103.94999999999999
+    },
+    "Rail, water & other transportation": {
+      "m": 81.9504,
+      "f": 11.88
+    },
+    "Material moving": {
+      "m": 613.1104,
+      "f": 157.41
+    }
+  },
+  "histogram": [
+    {
+      "m": 3966,
+      "f": 4059
+    },
+    {
+      "m": 4201,
+      "f": 4052
+    },
+    {
+      "m": 4225,
+      "f": 4057
+    },
+    {
+      "m": 4250,
+      "f": 4150
+    },
+    {
+      "m": 4271,
+      "f": 4021
+    },
+    {
+      "m": 4093,
+      "f": 3784
+    },
+    {
+      "m": 3839,
+      "f": 3651
+    },
+    {
+      "m": 3497,
+      "f": 3444
+    },
+    {
+      "m": 3160,
+      "f": 3100
+    },
+    {
+      "m": 2788,
+      "f": 2780
+    },
+    {
+      "m": 2407,
+      "f": 2552
+    },
+    {
+      "m": 2047,
+      "f": 2218
+    },
+    {
+      "m": 1633,
+      "f": 1921
+    },
+    {
+      "m": 1468,
+      "f": 1588
+    },
+    {
+      "m": 1085,
+      "f": 1348
+    },
+    {
+      "m": 830,
+      "f": 1102
+    },
+    {
+      "m": 695,
+      "f": 882
+    },
+    {
+      "m": 490,
+      "f": 730
+    },
+    {
+      "m": 359,
+      "f": 550
+    },
+    {
+      "m": 292,
+      "f": 415
+    }
+  ]
+}
