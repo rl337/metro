@@ -23,7 +23,7 @@ def generate(
 
     # Create the city and population models.
     city = City(p=population)
-    population_model = PopulationModel(p=population, r=rng)
+    population_model = PopulationModel(r=rng, p=population)
 
     # Create the CityModel instance
     city_model = CityModel(

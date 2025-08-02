@@ -3,7 +3,7 @@ import math
 from pathlib import Path
 
 class PopulationModel:
-    def __init__(self, p=100000, r=random.Random(), occ_file='data/occupations.txt'):
+    def __init__(self, r: random.Random, p=100000, occ_file='data/occupations.txt'):
         self.population = p
         self.occupations = {}
         self.zones = {}
