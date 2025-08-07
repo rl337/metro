@@ -4,10 +4,12 @@ import json
 from metro.city import City
 from metro.population import PopulationModel
 from metro.model import CityModel, Workforce, Zone, Occupation, HistogramEntry
+from metro.rng import HierarchicalRNG
 
 def generate(
     population: int = typer.Option(100000, help="The population of the city."),
     seed: int = typer.Option(None, help="The random seed to use."),
+    founding_year: int = typer.Option(1800, help="The founding year of the city."),
     output_file: str = typer.Option("city.json", help="The output file to save the city configuration."),
 ):
     """
@@ -16,23 +18,22 @@ def generate(
     if seed is None:
         seed = random.randint(0, 2**32 - 1)
 
-    print(f"Generating a city with a population of {population} and random seed {seed}.")
+    print(f"Generating a city with a population of {population}, a founding year of {founding_year}, and random seed {seed}.")
 
     # Create a random number generator with the given seed.
-    rng = random.Random(seed)
+    rng = HierarchicalRNG(seed)
 
-    # Create the city and population models.
-    city = City(p=population)
-    population_model = PopulationModel(r=rng, p=population)
+    # Create the population model.
+    population_model = PopulationModel.generate_new(r=rng.get_child("population"), p=population)
 
     # Create the CityModel instance
+    city_data = population_model.to_city_model_data()
     city_model = CityModel(
-        population=city.population,
         seed=seed,
-        workforce=Workforce(**population_model.workforce()),
-        zones={name: Zone(**data) for name, data in population_model.zones.items()},
-        occupations={name: Occupation(**data) for name, data in population_model.occupations.items()},
-        histogram=[HistogramEntry(**entry) for entry in population_model.histogram],
+        founding_year=founding_year,
+        current_year=founding_year,
+        timeline=[],
+        **city_data,
     )
 
     # Save the city configuration to a file.

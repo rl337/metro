@@ -19,12 +19,24 @@ class HistogramEntry(BaseModel):
     m: int = Field(..., description="The number of males in this age group.")
     f: int = Field(..., description="The number of females in this age group.")
 
+
+class Event(BaseModel):
+    """
+    Represents a historical event in the city's timeline.
+    """
+    year: int = Field(..., description="The year the event occurs.")
+    description: str = Field(..., description="A description of the event.")
+
+
 class CityModel(BaseModel):
     """
     Represents the data model for a city.
     """
     population: int = Field(..., description="The total population of the city.")
     seed: int = Field(..., description="The random seed used to generate the city.")
+    founding_year: int = Field(..., description="The year the city was founded.")
+    current_year: int = Field(..., description="The current year of the simulation.")
+    timeline: List[Event] = Field(..., description="A timeline of historical events.")
     workforce: Workforce = Field(..., description="The workforce distribution.")
     zones: Dict[str, Zone] = Field(..., description="The population distribution across different zones.")
     occupations: Dict[str, Occupation] = Field(..., description="The distribution of occupations.")
