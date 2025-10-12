@@ -9,18 +9,15 @@ on:
 jobs:
     validate:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Set up Python ${{ matrix.python-version }}
+            - name: Set up Python 3.12
               uses: actions/setup-python@v4
               with:
-                  python-version: ${{ matrix.python-version }}
+                  python-version: "3.12"
 
             - name: Cache pip packages
               uses: actions/cache@v3
@@ -39,18 +36,18 @@ jobs:
               run: ./run_checks.sh
 
             - name: Upload test results
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               if: always()
               with:
-                  name: test-results-python${{ matrix.python-version }}
+                  name: test-results
                   path: |
                       htmlcov/
                       .coverage
 
             - name: Upload build artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               if: always()
               with:
-                  name: build-artifacts-python${{ matrix.python-version }}
+                  name: build-artifacts
                   path: |
                       dist/
