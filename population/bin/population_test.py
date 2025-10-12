@@ -1,5 +1,5 @@
 import population
 
 m = population.PopulationModel()
-print m
+print(m)
 

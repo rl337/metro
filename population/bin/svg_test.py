@@ -9,4 +9,4 @@ if __name__ == '__main__':
     img.polyline([(50,150),(50,200),(200,200),(200,100)], svg.Style('none', 'red', 4))
     img.line((50,50), (200,200), svg.Style('none', 'blue', 4))
 
-    print img
+    print(img)

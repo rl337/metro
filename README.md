@@ -1,0 +1,209 @@
+# Metro
+
+A Python framework for metropolitan area simulation and visualization. Metro provides comprehensive tools for creating, rendering, and analyzing metropolitan area models with both 2D graphics capabilities and demographic modeling.
+
+## Project Overview
+
+Metro is designed to simulate and visualize metropolitan areas through a unified Python framework:
+
+1. **2D Rendering Engine** - A matplotlib-based graphics system for rendering geometric shapes and visualizations
+2. **Shape System** - Geometric primitives (Circle, Rectangle, Group) with collision detection and z-ordering
+3. **Population Modeling** - Statistical modeling of population demographics and occupational distributions
+4. **SVG Generation** - Library for creating scalable vector graphics
+
+## Architecture
+
+### Core Components (`metro/`)
+
+The main Python package provides a complete rendering and modeling framework:
+
+- **`metro.app`** - Main application entry point
+- **`metro.renderer`** - 2D graphics renderer using matplotlib for visualization
+- **`metro.model`** - Core data models and shape system
+  - **`color.py`** - Color management with RGBA support and conversion utilities
+  - **`point2d.py`** - 2D point mathematics and operations
+  - **`bounded.py`** - Bounding box functionality for shapes
+  - **`thing_stack.py`** - Manages collections of renderable objects with z-ordering
+  - **`shapes/`** - Geometric primitives (Circle, Rectangle, Group)
+  - **`things/`** - Renderable objects with color and depth
+
+#### Key Features:
+- Z-ordered rendering with depth sorting
+- Geometric shape collision detection
+- Comprehensive color system with multiple format support
+- Matplotlib-based visualization with high-quality output
+- Type hints throughout for better development experience
+
+### Legacy Components (`population/`)
+
+Legacy Python components for demographic modeling and SVG generation:
+
+- **`population.py`** - Population demographic modeling with age/gender distributions
+- **`svg.py`** - SVG generation library for creating scalable vector graphics
+- **`metro.py`** - City modeling framework
+
+#### Key Features:
+- Statistical population modeling using normal distributions
+- Occupational data processing and analysis
+- SVG shape generation (circles, rectangles, lines, polylines)
+- Workforce demographic calculations
+
+## Project Status
+
+This project has been **fully converted to Python** and is ready for development and use.
+
+### Current State:
+- ✅ Complete Python rendering engine with matplotlib
+- ✅ Comprehensive shape system with collision detection
+- ✅ Full test coverage with pytest
+- ✅ Modern Python packaging with pyproject.toml
+- ✅ Type hints and code quality tools
+- ✅ Legacy population modeling framework
+- ✅ SVG generation capabilities
+
+## Development Environment
+
+### Prerequisites
+
+- **Python 3.8+** (recommended: Python 3.11)
+- **Docker** (for isolated development as per project requirements)
+
+### Quick Start
+
+1. **Using Docker (Recommended)**:
+   ```bash
+   # Build the development container
+   docker build -t metro-dev .
+   
+   # Run the container with project mounted
+   docker run -it -v $(pwd):/workspace metro-dev
+   ```
+
+2. **Local Development**:
+   ```bash
+   # Install in development mode
+   pip install -e ".[dev,test]"
+   
+   # Run the main application
+   python -m metro.app
+   
+   # Run tests
+   pytest
+   
+   # Run validation script
+   ./run_checks.sh
+   ```
+
+## Testing
+
+The project follows comprehensive testing practices as outlined in `AGENTS.md`:
+
+### Python Testing
+- **Framework**: pytest with coverage
+- **Coverage**: Comprehensive unit tests for all components
+- **Run**: `pytest` or `python -m pytest`
+- **Coverage Report**: `pytest --cov=metro --cov-report=html`
+
+### Code Quality
+- **Formatting**: black
+- **Linting**: flake8
+- **Type Checking**: mypy
+- **All Tools**: `./run_checks.sh`
+
+### Validation Script
+Run all tests and checks:
+```bash
+./run_checks.sh
+```
+
+## Project Structure
+
+```
+metro/
+├── metro/                            # Main Python package
+│   ├── __init__.py                   # Package initialization
+│   ├── app.py                        # Main application
+│   ├── renderer.py                   # 2D graphics renderer
+│   └── model/                        # Core data models
+│       ├── __init__.py
+│       ├── color.py                  # Color management
+│       ├── point2d.py                # 2D point mathematics
+│       ├── bounded.py                # Bounding box functionality
+│       ├── thing_stack.py            # Object management
+│       ├── shapes/                   # Geometric primitives
+│       │   ├── __init__.py
+│       │   ├── shape.py              # Base shape classes
+│       │   ├── circle.py             # Circle implementation
+│       │   ├── rectangle.py          # Rectangle implementation
+│       │   └── group.py              # Composite shapes
+│       └── things/                   # Renderable objects
+│           ├── __init__.py
+│           ├── thing.py              # Base thing interface
+│           └── simple_thing.py       # Simple thing implementation
+├── tests/                            # Python unit tests
+│   ├── __init__.py
+│   ├── test_color.py                 # Color tests
+│   ├── test_point2d.py               # Point2D tests
+│   ├── test_shapes.py                # Shape tests
+│   └── test_thing_stack.py           # ThingStack tests
+├── population/                       # Legacy Python components
+│   ├── lib/                          # Python libraries
+│   │   ├── metro.py                  # City modeling
+│   │   ├── population.py             # Demographics
+│   │   └── svg.py                    # SVG generation
+│   ├── bin/                          # Python executables
+│   └── data/                         # Data files
+├── pyproject.toml                    # Python project configuration
+├── setup.py                          # Setup script (compatibility)
+├── Dockerfile                        # Development container
+├── run_checks.sh                     # Validation script
+└── .github/workflows/                # CI/CD pipelines
+```
+
+## Contributing
+
+This project follows the development process outlined in `AGENTS.md`:
+
+1. **All work must be tracked via GitHub Issues**
+2. **Create feature branches** named `{issue_id}_{snake_case_title}`
+3. **Comprehensive testing** required for all changes
+4. **Docker-based development** for consistency
+5. **Pull request validation** via GitHub Actions
+
+### Development Workflow
+
+1. Create a GitHub issue for any new work
+2. Create a branch: `git checkout -b 00001_feature_name`
+3. Make changes with corresponding tests
+4. Run validation: `./run_checks.sh`
+5. Create pull request referencing the issue
+6. Address any CI failures
+7. Update issue with completion status
+
+## Data Sources
+
+The population modeling uses occupational data from `population/data/occupations.txt`, which contains:
+- Occupation categories and gender distributions
+- Zone type classifications (Commercial, Service, etc.)
+- Density level assignments (Low, Medium, High)
+
+## Future Development
+
+### Planned Enhancements
+- Enhanced visualization capabilities with interactive plots
+- Performance optimizations for large-scale simulations
+- Integration with geographic data formats (GeoJSON, Shapefile)
+- Real-time rendering capabilities
+- Web-based visualization interface
+- Advanced demographic modeling features
+
+### Migration Notes
+The project has been fully converted from Java to Python. All functionality has been preserved and enhanced with modern Python features including type hints, comprehensive testing, and modern packaging.
+
+## License
+
+This project is licensed under the Creative Commons Attribution 4.0 International License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions, issues, or contributions, please use the GitHub issue tracker or contact the development team.
