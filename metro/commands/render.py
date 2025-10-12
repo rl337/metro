@@ -1,9 +1,13 @@
 import typer
-import json
+
+# import json
 from metro.model import CityModel
 
+
 def render(
-    input_file: str = typer.Option("city.json", help="The input file to read the city configuration from."),
+    input_file: str = typer.Option(
+        "city.json", help="The input file to read the city configuration from."
+    ),
 ):
     """
     Renders a city model to an SVG file.

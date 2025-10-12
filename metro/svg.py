@@ -4,7 +4,7 @@ class SVG:
         self.desc = desc
         self.shapes = []
         self.styles = {}
-        self.style('.Default', Style())
+        self.style(".Default", Style())
 
     def render_shapes(self):
         return "\\n".join([f"{x}" for x in self.shapes])
@@ -12,30 +12,30 @@ class SVG:
     def style(self, name, style):
         self.styles[name] = style
 
-    def line(self, p1, p2, style='.Default'):
+    def line(self, p1, p2, style=".Default"):
         self.shapes.append(Line(p1, p2, style))
 
-    def polyline(self, points=None, style='.Default'):
+    def polyline(self, points=None, style=".Default"):
         if points is None:
             points = []
         self.shapes.append(Polyline(points, style))
 
-    def circle(self, x, y, r, style='.Default'):
+    def circle(self, x, y, r, style=".Default"):
         self.shapes.append(Circle(x, y, r, style))
 
-    def rect(self, x, y, w, h, style='.Default'):
+    def rect(self, x, y, w, h, style=".Default"):
         self.shapes.append(Rect(x, y, w, h, style))
 
     def __str__(self):
-        title = ''
+        title = ""
         if self.title is not None:
-            title = f'<title>{self.title}</title>\\n'
+            title = f"<title>{self.title}</title>\\n"
 
-        desc = ''
+        desc = ""
         if self.desc is not None:
-            desc = f'<desc>{self.desc}</desc>\\n'
+            desc = f"<desc>{self.desc}</desc>\\n"
 
-        styles = ''
+        styles = ""
         if len(self.styles) > 0:
             styledefs = "\\n".join([f"{x} {{ {self.styles[x]} }}" for x in self.styles])
             styles = f'<style type="text/css"><![CDATA[\\n{styledefs}\\n]]></style>\\n'
@@ -45,11 +45,11 @@ class SVG:
 
 
 class Style:
-    def __init__(self, fill='none', stroke='black', stroke_width=1, **kwargs):
+    def __init__(self, fill="none", stroke="black", stroke_width=1, **kwargs):
         self.attribs = {}
-        self.attribs['fill'] = fill
-        self.attribs['stroke'] = stroke
-        self.attribs['stroke-width'] = stroke_width
+        self.attribs["fill"] = fill
+        self.attribs["stroke"] = stroke
+        self.attribs["stroke-width"] = stroke_width
         if kwargs is not None:
             for key, value in kwargs.items():
                 self.attribs[key] = value
@@ -58,23 +58,25 @@ class Style:
         return self.attribs[key]
 
     def __str__(self):
-        return '; '.join([f'{x}:{self.attribs[x]}' for x in self.attribs])
+        return "; ".join([f"{x}:{self.attribs[x]}" for x in self.attribs])
 
 
 class SVGObj:
-    def __init__(self, style='.Default'):
+    def __init__(self, style=".Default"):
         self.style = style
 
     def _svg_attribs(self):
-        if type(self.style) == str:
+        if isinstance(self.style, str):
             return f'class="{self.style}"'
 
         if isinstance(self.style, Style):
-            return ' '.join([f'{x}="{self.style.attribs[x]}"' for x in self.style.attribs])
+            return " ".join(
+                [f'{x}="{self.style.attribs[x]}"' for x in self.style.attribs]
+            )
 
 
 class Rect(SVGObj):
-    def __init__(self, x, y, w, h, style='.Default'):
+    def __init__(self, x, y, w, h, style=".Default"):
         super().__init__(style)
         self.x = x
         self.y = y
@@ -86,18 +88,20 @@ class Rect(SVGObj):
 
 
 class Circle(SVGObj):
-    def __init__(self, x, y, r, style='.Default'):
+    def __init__(self, x, y, r, style=".Default"):
         super().__init__(style)
         self.x = x
         self.y = y
         self.r = r
 
     def __str__(self):
-        return f'<circle cx="{self.x}" cy="{self.y}" r="{self.r}" {self._svg_attribs()}/>'
+        return (
+            f'<circle cx="{self.x}" cy="{self.y}" r="{self.r}" {self._svg_attribs()}/>'
+        )
 
 
 class Polyline(SVGObj):
-    def __init__(self, points=None, style='.Default'):
+    def __init__(self, points=None, style=".Default"):
         if points is None:
             points = []
         super().__init__(style)
@@ -109,7 +113,7 @@ class Polyline(SVGObj):
 
 
 class Line(SVGObj):
-    def __init__(self, p1, p2, style='.Default'):
+    def __init__(self, p1, p2, style=".Default"):
         super().__init__(style)
         self.p1 = p1
         self.p2 = p2
