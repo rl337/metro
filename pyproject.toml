@@ -39,6 +39,8 @@ dev = [
     "black>=22.0.0",
     "flake8>=5.0.0",
     "mypy>=1.0.0",
+    "playwright>=1.40.0",
+    "pytest-playwright>=0.4.0",
 ]
 test = [
     "pytest>=7.0.0",

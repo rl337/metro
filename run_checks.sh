@@ -187,6 +187,38 @@ fi
 
 echo ""
 echo "=========================================="
+echo "UI Testing (Playwright)"
+echo "=========================================="
+
+# Check if Node.js and npm are available
+if command_exists node && command_exists npm; then
+    print_status "Running UI tests with Playwright..."
+    
+    # Install Playwright if not already installed
+    if [ ! -d "node_modules" ]; then
+        print_status "Installing Playwright dependencies..."
+        npm install
+    fi
+    
+    # Install Playwright browsers if not already installed
+    if ! npx playwright --version > /dev/null 2>&1; then
+        print_status "Installing Playwright browsers..."
+        npx playwright install
+    fi
+    
+    # Run UI tests
+    if npx playwright test --reporter=line; then
+        print_status "UI tests passed"
+    else
+        print_warning "UI tests failed - check test results"
+    fi
+else
+    print_warning "Node.js/npm not available, skipping UI tests"
+    print_warning "To run UI tests: install Node.js and run 'npm install && npx playwright test'"
+fi
+
+echo ""
+echo "=========================================="
 echo "Summary"
 echo "=========================================="
 

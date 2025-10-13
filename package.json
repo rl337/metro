@@ -1,0 +1,16 @@
+{
+  "name": "metro-ui-tests",
+  "version": "1.0.0",
+  "description": "UI tests for Metro City Generator webapp",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "install:browsers": "playwright install",
+    "show-report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

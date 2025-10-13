@@ -32,6 +32,16 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install -e ".[dev,test]"
 
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: '18'
+
+            - name: Install Playwright dependencies
+              run: |
+                  npm install
+                  npx playwright install --with-deps
+
             - name: Run validation script
               run: ./run_checks.sh
 

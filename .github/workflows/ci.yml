@@ -19,12 +19,20 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev,test]"
-      - name: Run validation script
-        run: ./run_checks.sh
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -e ".[dev,test]"
+        - name: Install Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '18'
+        - name: Install Playwright dependencies
+          run: |
+            npm install
+            npx playwright install --with-deps
+        - name: Run validation script
+          run: ./run_checks.sh
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
