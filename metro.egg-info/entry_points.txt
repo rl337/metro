@@ -1,2 +1,0 @@
-[console_scripts]
-metro = metro.app:main
