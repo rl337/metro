@@ -187,24 +187,16 @@ fi
 
 echo ""
 echo "=========================================="
-echo "UI Testing (Playwright)"
+echo "UI Testing (Playwright) - TEMPORARILY DISABLED"
 echo "=========================================="
 
-    # Check if Node.js and npm are available
-    if command_exists node && command_exists npm; then
-        print_status "Running UI tests with Playwright..."
-        
-        # Use the comprehensive UI test runner
-        if ./run_ui_tests.sh --mode all --browser chromium; then
-            print_status "UI tests passed"
-        else
-            print_warning "UI tests failed - check test results"
-            print_warning "Run './run_ui_tests.sh --help' for more options"
-        fi
-    else
-        print_warning "Node.js/npm not available, skipping UI tests"
-        print_warning "To run UI tests: install Node.js and run './run_ui_tests.sh'"
-    fi
+print_warning "UI tests temporarily disabled due to Docker/CI compatibility issues"
+print_warning "UI tests are available locally with: ./run_ui_tests.sh"
+print_warning "To run UI tests locally:"
+print_warning "  1. Install Node.js and npm"
+print_warning "  2. Run: npm install"
+print_warning "  3. Run: npx playwright install --with-deps"
+print_warning "  4. Run: ./run_ui_tests.sh --mode basic --browser chromium"
 
 echo ""
 echo "=========================================="

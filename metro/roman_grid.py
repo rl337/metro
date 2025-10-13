@@ -306,3 +306,4 @@ class RomanGridSystem:
     def get_intersection_points(self) -> List[GridPoint]:
         """Get all intersection points."""
         return [p for p in self.grid_points if p.type == "intersection"]
+

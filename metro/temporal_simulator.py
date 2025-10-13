@@ -434,3 +434,4 @@ class TemporalCitySimulator:
                 "total_years": max(state.year for state in self.temporal_states) if self.temporal_states else 0
             }
         }
+

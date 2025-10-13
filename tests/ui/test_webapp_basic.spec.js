@@ -69,3 +69,4 @@ test.describe('Metro Webapp Basic Functionality', () => {
         await expect(page.locator('#currentYear')).toBeVisible();
     });
 });
+

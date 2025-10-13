@@ -271,3 +271,4 @@ print_status "  - test-results/ (HTML report, videos, traces)"
 print_status "  - tests/ui/screenshots/ (Visual test screenshots)"
 
 exit $TEST_RESULT
+

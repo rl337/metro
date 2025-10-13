@@ -92,3 +92,4 @@ UI tests are automatically run in GitHub Actions:
 ## Test Data
 
 Tests use the default `city.json` configuration and generate cities with various parameters to ensure robustness.
+

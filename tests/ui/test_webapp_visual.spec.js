@@ -147,3 +147,4 @@ test.describe('Metro Webapp Visual Tests', () => {
         expect(statusText).toBeDefined();
     });
 });
+

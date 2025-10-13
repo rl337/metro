@@ -2,26 +2,27 @@
     "name": "metro-ui-tests",
     "version": "1.0.0",
     "description": "UI tests for Metro City Generator webapp",
-  "scripts": {
-    "test": "playwright test",
-    "test:ui": "playwright test --ui",
-    "test:headed": "playwright test --headed",
-    "test:debug": "playwright test --debug",
-    "test:basic": "playwright test tests/ui/test_webapp_basic.spec.js",
-    "test:functionality": "playwright test tests/ui/test_webapp_functionality.spec.js",
-    "test:visual": "playwright test tests/ui/test_webapp_visual.spec.js",
-    "test:performance": "playwright test tests/ui/test_webapp_performance.spec.js",
-    "test:accessibility": "playwright test tests/ui/test_webapp_accessibility.spec.js",
-    "test:errors": "playwright test tests/ui/test_webapp_errors.spec.js",
-    "test:chromium": "playwright test --project=chromium",
-    "test:firefox": "playwright test --project=firefox",
-    "test:webkit": "playwright test --project=webkit",
-    "test:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
-    "install:browsers": "playwright install",
-    "show-report": "playwright show-report",
-    "test:update-snapshots": "playwright test --update-snapshots"
-  },
+    "scripts": {
+        "test": "playwright test",
+        "test:ui": "playwright test --ui",
+        "test:headed": "playwright test --headed",
+        "test:debug": "playwright test --debug",
+        "test:basic": "playwright test tests/ui/test_webapp_basic.spec.js",
+        "test:functionality": "playwright test tests/ui/test_webapp_functionality.spec.js",
+        "test:visual": "playwright test tests/ui/test_webapp_visual.spec.js",
+        "test:performance": "playwright test tests/ui/test_webapp_performance.spec.js",
+        "test:accessibility": "playwright test tests/ui/test_webapp_accessibility.spec.js",
+        "test:errors": "playwright test tests/ui/test_webapp_errors.spec.js",
+        "test:chromium": "playwright test --project=chromium",
+        "test:firefox": "playwright test --project=firefox",
+        "test:webkit": "playwright test --project=webkit",
+        "test:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+        "install:browsers": "playwright install",
+        "show-report": "playwright show-report",
+        "test:update-snapshots": "playwright test --update-snapshots"
+    },
     "devDependencies": {
         "@playwright/test": "^1.40.0"
     }
 }
+

@@ -427,3 +427,4 @@ Tests verify compliance with Web Content Accessibility Guidelines:
 - [Metro Project README](../README.md)
 - [Test Configuration](playwright.config.js)
 - [Test Runner Script](../run_ui_tests.sh)
+

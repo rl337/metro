@@ -59,32 +59,20 @@ module.exports = defineConfig({
         },
     ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'python -m http.server 8000 --directory docs',
-    url: 'http://localhost:8000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+    /* Run your local dev server before starting the tests */
+    webServer: {
+        command: 'python -m http.server 8000 --directory docs',
+        url: 'http://localhost:8000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+    },
 
-  /* Global test configuration */
-  globalSetup: require.resolve('./tests/ui/global-setup.js'),
-  globalTeardown: require.resolve('./tests/ui/global-teardown.js'),
+    /* Test timeout configuration */
+    timeout: 30000,
+    expect: {
+        timeout: 10000,
+    },
 
-  /* Test timeout configuration */
-  timeout: 30000,
-  expect: {
-    timeout: 10000,
-  },
-
-  /* Test retry configuration */
-  retries: process.env.CI ? 2 : 0,
-
-  /* Test parallelization */
-  fullyParallel: true,
-  workers: process.env.CI ? 2 : undefined,
-
-  /* Test output configuration */
-  outputDir: 'test-results/',
-  testDir: './tests/ui',
+    /* Test output configuration */
+    outputDir: 'test-results/',
 });
