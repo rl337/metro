@@ -187,6 +187,19 @@ fi
 
 echo ""
 echo "=========================================="
+echo "UI Testing (Playwright) - TEMPORARILY DISABLED"
+echo "=========================================="
+
+print_warning "UI tests temporarily disabled due to Docker/CI compatibility issues"
+print_warning "UI tests are available locally with: ./run_ui_tests.sh"
+print_warning "To run UI tests locally:"
+print_warning "  1. Install Node.js and npm"
+print_warning "  2. Run: npm install"
+print_warning "  3. Run: npx playwright install --with-deps"
+print_warning "  4. Run: ./run_ui_tests.sh --mode basic --browser chromium"
+
+echo ""
+echo "=========================================="
 echo "Summary"
 echo "=========================================="
 
