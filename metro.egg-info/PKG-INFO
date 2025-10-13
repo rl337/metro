@@ -1,3 +1,41 @@
+Metadata-Version: 2.4
+Name: metro
+Version: 1.0.0
+Summary: Metropolitan Area Simulation and Visualization Framework
+Author: Metro Development Team
+License: CC-BY-4.0
+Project-URL: Homepage, https://github.com/your-org/metro
+Project-URL: Repository, https://github.com/your-org/metro
+Project-URL: Documentation, https://github.com/your-org/metro#readme
+Project-URL: Bug Tracker, https://github.com/your-org/metro/issues
+Keywords: simulation,visualization,metropolitan,rendering,graphics
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Scientific/Engineering :: Visualization
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: matplotlib>=3.5.0
+Requires-Dist: numpy>=1.21.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: black>=22.0.0; extra == "dev"
+Requires-Dist: flake8>=5.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Provides-Extra: test
+Requires-Dist: pytest>=7.0.0; extra == "test"
+Requires-Dist: pytest-cov>=4.0.0; extra == "test"
+Dynamic: license-file
+
 # Metro
 
 A Python framework for metropolitan area simulation and visualization. Metro provides comprehensive tools for creating, rendering, and analyzing metropolitan area models with both 2D graphics capabilities and demographic modeling.

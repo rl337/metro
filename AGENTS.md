@@ -1,27 +1,40 @@
-# Agent Instructions
+# Project Instruction
 
-This document provides guidance for AI agents working on this repository.
+## Use of Docker
 
-## Project Vision
+For isolating command line dependencies and execution of commands you will use a Docker container.  If one does not yet exist, create a Dockerfile and as dependencies or command line tools / libraries are needed add them to the docker container.   All execution of local command should happen in the Docker container where the project directory is shared as a volume.
 
-The goal of this project is to create a modern and extensible city population modeler. The tool should be easy to use from the command line and provide a clear and versionable way to manage city models.
+## Testing and Coverage
 
-## Architectural Principles
+When adding or removing code it is essential that every functional edit to the codebase have corresponding tests. These tests, when possible should use the testing frameworks of the platform, for example in python it should be pytest.  
 
-- **Object-Oriented Design:** The codebase should follow object-oriented principles. Core concepts should be represented by classes.
-- **Single Entry Point:** The project has a single entry point for the command-line interface, located in `metro/main.py`.
-- **Command Design Pattern:** Subcommands should be implemented following a command design pattern. Each command should be a self-contained unit in the `metro/commands` directory.
-- **Strict Typing:** All code should use rigorous type hinting. The use of `typing.Any` should be avoided. If you encounter a situation where `Any` seems necessary, you should refactor the code to introduce a new, strictly-typed object.
-- **Pydantic Models:** The `CityModel` and its sub-models are defined using Pydantic. This is the source of truth for the city's data structure. All data exchange should be done through these models.
+## Validation Script
 
-## Development Workflow
+There should be a run_checks.sh that runs all automated tests, static checks, style linting, test coverage or automation that run in the github actions.  If the repository contains multiple languages or platforms ALL of their checks must be run from this validation script.
 
-- **Tests:** All new features should be accompanied by tests. Tests are located in the `tests/` directory and are run using `pytest`.
-- **Docstrings:** All modules, classes, and functions should have clear and concise docstrings that explain their purpose, arguments, and return values.
-- **GitHub Actions:** The project uses GitHub Actions for continuous integration. All tests must pass before a change is merged.
+## Validation of PRs
+There should be at least 1 github action designed to validate Pull Requests which run a relevant subset of 
+checks found in run_checks.sh.  Ideally it will be all but there may be checks that cannot run headlessly or in a github actions context.  
 
-## Future Plans
+# Task Instruction
+All work and changes to the repository should be part of a task.  A task has a distinct starting point and measurable end goal.  If you feel like you are not presently in a task, ask for more detailed instructions or clarity on any underdeveloped parts of the problem.  Once the problem is well understood and appropriately broken down it will be tracked in a Github Issue.
 
-- **SVG Rendering:** The `render` command will be extended to generate SVG maps of the city.
-- **City Evolution:** New commands will be added to evolve the city over time (e.g., simulating population growth, construction, etc.).
-- **GitHub Pages:** The project will eventually generate a GitHub Pages site to showcase a default city model. This will be orchestrated through a shell script that runs the CLI commands in sequence.
+When Starting a distinct task that has a clear starting point and end goal, create an Issue in the github issue tracker via the github MCP (configured via Cursor MCPs) and start a branch named after a 5 digit issue's ID left padded with 0s and suffixed with a snake case identifier transformation of the issue title.  You should check into this branch often and check github action statuses on your checkins fixing any problems that arise with them.  When the task is complete, create a PR against main for me to review and merge.
+
+Issue tracking should take the place of status markdowns in the repository.
+
+# Automatic Task Instructions
+Once a task is started and a Github Issue is created the following steps in the task should be performed
+## Starting Steps
+1. Create branch as described in Task Instruction
+2. Evaluate existing checks in run_checks.sh and augment them as well as checks in github actions, updating them when they are out of date or superceded by other methodology.
+3. If checks introduced in step 2 of starting steps fail, those failures become part of the scope of this task.
+## Closing Steps
+1. Verify changes are logically complete and consistent with the overall style of the project
+2. Run all checks defined in the run_checks.sh
+3. Clean up any artifacts that might have been created during development of the task.  Add relevant entries to .gitignore. Fix problems found with step 2.  If there were problems fixed, return to step 1.  
+4. Check in all relevant changes and new files into the branch.  Push changes to to remote.
+5. **Create a pull request against main that references the GitHub issue using "Closes #<issue_number>" in the PR title or description.**
+6. Wait for verification github action to complete.  If the action fails, analyze failure treating that failure like a local test failure and return to step 3.
+7. When previous closing steps are complete, update the GitHub issue with what was accomplished.
+
