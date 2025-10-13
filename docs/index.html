@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro City Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .control-group input, .control-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .status {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status.loading {
+            border-left-color: #ffc107;
+        }
+
+        .status.error {
+            border-left-color: #dc3545;
+        }
+
+        .status.success {
+            border-left-color: #28a745;
+        }
+
+        .canvas-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        #cityCanvas {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+        }
+
+        .city-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏙️ Metro City Generator</h1>
+            <p>Generate reproducible cities with hierarchical random seeds</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="population">Target Population:</label>
+                <input type="number" id="population" value="100000" min="1000" max="1000000" step="1000">
+            </div>
+
+            <div class="control-group">
+                <label for="seed">Master Seed:</label>
+                <input type="number" id="seed" value="2944957927" min="0" max="4294967295">
+            </div>
+
+            <div class="control-group">
+                <label for="citySize">City Size (km):</label>
+                <input type="number" id="citySize" value="10" min="1" max="50" step="0.5">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="generateCity()">Generate City</button>
+                <button class="btn btn-secondary" onclick="loadDefaultCity()">Load Default City</button>
+                <button class="btn btn-secondary" onclick="exportCity()">Export City</button>
+            </div>
+        </div>
+
+        <div id="status" class="status hidden">
+            <div id="statusText">Ready to generate city...</div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="cityCanvas" width="800" height="600"></canvas>
+            <div id="cityInfo" class="city-info hidden">
+                <div class="info-card">
+                    <h3>Population</h3>
+                    <div class="value" id="cityPopulation">-</div>
+                </div>
+                <div class="info-card">
+                    <h3>Area</h3>
+                    <div class="value" id="cityArea">-</div>
+                </div>
+                <div class="info-card">
+                    <h3>Density</h3>
+                    <div class="value" id="cityDensity">-</div>
+                </div>
+                <div class="info-card">
+                    <h3>Zones</h3>
+                    <div class="value" id="cityZones">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="metro-web.js"></script>
+    <script>
+        // Load default city on page load
+        window.addEventListener('load', () => {
+            loadDefaultCity();
+        });
+    </script>
+</body>
+</html>
