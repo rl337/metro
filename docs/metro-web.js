@@ -121,6 +121,7 @@ class MetroCityGenerator {
             // Render the city
             this.renderCity();
             this.updateCityInfo();
+            this.showCityInfo();
             
             this.showStatus('City generated successfully!', 'success');
             
@@ -413,13 +414,37 @@ class MetroCityGenerator {
     updateCityInfo() {
         if (!this.currentCity) return;
 
-        document.getElementById('cityPopulation').textContent = this.currentCity.population.toLocaleString();
-        document.getElementById('cityArea').textContent = this.currentCity.area.toFixed(1);
-        document.getElementById('cityDensity').textContent = Math.round(this.currentCity.population / this.currentCity.area).toLocaleString();
-        document.getElementById('cityDistricts').textContent = this.currentCity.districts.length;
-        document.getElementById('cityZones').textContent = Object.keys(this.currentCity.zones).length;
-        document.getElementById('cityMasterSeed').textContent = this.seedGenerator.masterSeed;
-        document.getElementById('cityGeneratedAt').textContent = new Date().toLocaleString();
+        // Safely update city info elements
+        this.updateElement('cityPopulation', this.currentCity.population.toLocaleString());
+        this.updateElement('cityArea', this.currentCity.area.toFixed(1));
+        this.updateElement('cityDensity', Math.round(this.currentCity.population / this.currentCity.area).toLocaleString());
+        this.updateElement('cityDistricts', this.currentCity.districts.length);
+        this.updateElement('cityZones', Object.keys(this.currentCity.zones).length);
+        this.updateElement('cityMasterSeed', this.seedGenerator.masterSeed);
+        this.updateElement('cityGeneratedAt', new Date().toLocaleString());
+    }
+
+    updateElement(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = value;
+        } else {
+            console.warn(`Element with id '${elementId}' not found`);
+        }
+    }
+
+    showCityInfo() {
+        const cityInfo = document.getElementById('cityInfo');
+        if (cityInfo) {
+            cityInfo.classList.remove('hidden');
+        }
+    }
+
+    hideCityInfo() {
+        const cityInfo = document.getElementById('cityInfo');
+        if (cityInfo) {
+            cityInfo.classList.add('hidden');
+        }
     }
 
     showStatus(message, type) {
@@ -527,6 +552,7 @@ class MetroCityGenerator {
             // Render initial state
             this.renderTemporalCity();
             this.updateTemporalCityInfo();
+            this.showCityInfo();
             
             this.showStatus(`Temporal city generated! Evolution from 0 to ${maxYear} AD`, 'success');
             
@@ -628,16 +654,85 @@ class MetroCityGenerator {
                 districtType = rng.choice(['residential', 'commercial', 'industrial', 'mixed', 'park']);
             }
             
+            // Generate shape based on era and type
+            const shape = this.generateDistrictShape(era, districtType, size, rng);
+            
             districts.push({
                 id: `district_${i}`,
                 name: `${districtType.charAt(0).toUpperCase() + districtType.slice(1)} District ${i + 1}`,
                 x: x, y: y, size: size,
                 type: districtType,
+                shape: shape,
                 population: Math.floor(population / numDistricts)
             });
         }
         
         return districts;
+    }
+
+    generateDistrictShape(era, districtType, size, rng) {
+        // Shape evolution based on era and district type
+        const shapeTypes = ['rectangle', 'circle', 'polygon'];
+        let shapeType = 'rectangle';
+        
+        if (era === 'Founding') {
+            // Early cities use simple rectangular blocks
+            shapeType = 'rectangle';
+        } else if (era === 'Growth') {
+            // Some circular districts for important areas
+            if (districtType === 'commercial' && rng.uniform() < 0.3) {
+                shapeType = 'circle';
+            } else {
+                shapeType = 'rectangle';
+            }
+        } else if (era === 'Expansion') {
+            // More complex shapes emerge
+            if (districtType === 'commercial' && rng.uniform() < 0.4) {
+                shapeType = 'circle';
+            } else if (districtType === 'industrial' && rng.uniform() < 0.2) {
+                shapeType = 'polygon';
+            } else {
+                shapeType = rng.choice(['rectangle', 'circle']);
+            }
+        } else if (era === 'Modernization') {
+            // Full range of shapes, including complex polygons
+            if (districtType === 'park') {
+                shapeType = rng.choice(['circle', 'polygon']);
+            } else if (districtType === 'commercial') {
+                shapeType = rng.choice(['rectangle', 'circle', 'polygon']);
+            } else {
+                shapeType = rng.choice(shapeTypes);
+            }
+        }
+        
+        // Generate shape-specific parameters
+        switch (shapeType) {
+            case 'circle':
+                return {
+                    type: 'circle',
+                    radius: size / 2,
+                    centerX: 0, // Relative to district center
+                    centerY: 0
+                };
+            case 'polygon':
+                return {
+                    type: 'polygon',
+                    sides: rng.randint(4, 8),
+                    radius: size / 2,
+                    rotation: rng.uniform(0, 2 * Math.PI),
+                    centerX: 0,
+                    centerY: 0
+                };
+            case 'rectangle':
+            default:
+                return {
+                    type: 'rectangle',
+                    width: size,
+                    height: size,
+                    centerX: 0,
+                    centerY: 0
+                };
+        }
     }
     
     generateZonesForEra(era, districts, rng) {
@@ -851,12 +946,19 @@ class MetroCityGenerator {
             };
             
             ctx.fillStyle = colors[district.type] || '#96ceb4';
-            ctx.fillRect(x - size/2, y - size/2, size, size);
+            
+            // Draw based on shape type
+            if (district.shape) {
+                this.drawDistrictShape(ctx, district.shape, x, y, size);
+            } else {
+                // Fallback to rectangle for backward compatibility
+                ctx.fillRect(x - size/2, y - size/2, size, size);
+            }
             
             // District border
             ctx.strokeStyle = '#333';
             ctx.lineWidth = 2;
-            ctx.strokeRect(x - size/2, y - size/2, size, size);
+            this.strokeDistrictShape(ctx, district.shape, x, y, size);
             
             // District label
             ctx.fillStyle = '#333';
@@ -864,6 +966,108 @@ class MetroCityGenerator {
             ctx.textAlign = 'center';
             ctx.fillText(district.name, x, y + 3);
         });
+    }
+
+    drawDistrictShape(ctx, shape, x, y, size) {
+        if (!shape) {
+            // Fallback to rectangle
+            ctx.fillRect(x - size/2, y - size/2, size, size);
+            return;
+        }
+
+        ctx.save();
+        ctx.translate(x, y);
+
+        switch (shape.type) {
+            case 'circle':
+                const radius = (shape.radius / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                ctx.beginPath();
+                ctx.arc(shape.centerX, shape.centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+                break;
+
+            case 'polygon':
+                const polyRadius = (shape.radius / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                const sides = shape.sides || 6;
+                const rotation = shape.rotation || 0;
+                
+                ctx.rotate(rotation);
+                ctx.beginPath();
+                for (let i = 0; i < sides; i++) {
+                    const angle = (i * 2 * Math.PI) / sides;
+                    const px = shape.centerX + polyRadius * Math.cos(angle);
+                    const py = shape.centerY + polyRadius * Math.sin(angle);
+                    
+                    if (i === 0) {
+                        ctx.moveTo(px, py);
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                }
+                ctx.closePath();
+                ctx.fill();
+                break;
+
+            case 'rectangle':
+            default:
+                const width = (shape.width / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                const height = (shape.height / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                ctx.fillRect(shape.centerX - width/2, shape.centerY - height/2, width, height);
+                break;
+        }
+
+        ctx.restore();
+    }
+
+    strokeDistrictShape(ctx, shape, x, y, size) {
+        if (!shape) {
+            // Fallback to rectangle
+            ctx.strokeRect(x - size/2, y - size/2, size, size);
+            return;
+        }
+
+        ctx.save();
+        ctx.translate(x, y);
+
+        switch (shape.type) {
+            case 'circle':
+                const radius = (shape.radius / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                ctx.beginPath();
+                ctx.arc(shape.centerX, shape.centerY, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+                break;
+
+            case 'polygon':
+                const polyRadius = (shape.radius / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                const sides = shape.sides || 6;
+                const rotation = shape.rotation || 0;
+                
+                ctx.rotate(rotation);
+                ctx.beginPath();
+                for (let i = 0; i < sides; i++) {
+                    const angle = (i * 2 * Math.PI) / sides;
+                    const px = shape.centerX + polyRadius * Math.cos(angle);
+                    const py = shape.centerY + polyRadius * Math.sin(angle);
+                    
+                    if (i === 0) {
+                        ctx.moveTo(px, py);
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                }
+                ctx.closePath();
+                ctx.stroke();
+                break;
+
+            case 'rectangle':
+            default:
+                const width = (shape.width / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                const height = (shape.height / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
+                ctx.strokeRect(shape.centerX - width/2, shape.centerY - height/2, width, height);
+                break;
+        }
+
+        ctx.restore();
     }
     
     drawTemporalInfrastructure(infrastructure) {
@@ -989,24 +1193,24 @@ class MetroCityGenerator {
         const cityState = this.temporalData.timeline.find(state => state.year === this.currentYear);
         if (!cityState) return;
         
-        // Update city info display
-        document.getElementById('cityPopulation').textContent = cityState.population.toLocaleString();
-        document.getElementById('cityArea').textContent = cityState.area.toFixed(1);
-        document.getElementById('cityDensity').textContent = Math.round(cityState.population / cityState.area).toLocaleString();
-        document.getElementById('cityDistricts').textContent = cityState.districts.length;
-        document.getElementById('cityZones').textContent = Object.keys(cityState.zones).length;
-        document.getElementById('cityMasterSeed').textContent = this.temporalData.metadata.master_seed;
-        document.getElementById('cityGeneratedAt').textContent = new Date().toLocaleString();
+        // Update city info display safely
+        this.updateElement('cityPopulation', cityState.population.toLocaleString());
+        this.updateElement('cityArea', cityState.area.toFixed(1));
+        this.updateElement('cityDensity', Math.round(cityState.population / cityState.area).toLocaleString());
+        this.updateElement('cityDistricts', cityState.districts.length);
+        this.updateElement('cityZones', Object.keys(cityState.zones).length);
+        this.updateElement('cityMasterSeed', this.temporalData.metadata.master_seed);
+        this.updateElement('cityGeneratedAt', new Date().toLocaleString());
     }
     
-    playEvolution() {
-        const playBtn = document.getElementById('playBtn');
+    togglePlayPause() {
+        const playPauseBtn = document.getElementById('playPauseBtn');
         const timelineSlider = document.getElementById('timelineSlider');
         
         if (this.isPlaying) {
             // Stop playing
             this.isPlaying = false;
-            playBtn.textContent = 'Play Evolution';
+            playPauseBtn.textContent = 'Play';
             if (this.playInterval) {
                 clearInterval(this.playInterval);
                 this.playInterval = null;
@@ -1014,7 +1218,7 @@ class MetroCityGenerator {
         } else {
             // Start playing
             this.isPlaying = true;
-            playBtn.textContent = 'Stop Evolution';
+            playPauseBtn.textContent = 'Pause';
             
             this.playInterval = setInterval(() => {
                 const currentValue = parseInt(timelineSlider.value);
@@ -1022,16 +1226,56 @@ class MetroCityGenerator {
                 
                 if (currentValue >= maxValue) {
                     // Reached end, stop playing
-                    this.playEvolution();
+                    this.togglePlayPause();
                 } else {
                     // Move to next year
                     timelineSlider.value = currentValue + 10;
                     this.currentYear = parseInt(timelineSlider.value);
-                    document.getElementById('currentYear').textContent = this.currentYear;
+                    this.updateElement('currentYear', this.currentYear);
                     this.renderTemporalCity();
                     this.updateTemporalCityInfo();
                 }
             }, 200); // 200ms per step
+        }
+    }
+
+    resetTimeline() {
+        const timelineSlider = document.getElementById('timelineSlider');
+        if (timelineSlider) {
+            timelineSlider.value = 0;
+            this.currentYear = 0;
+            this.updateElement('currentYear', this.currentYear);
+            this.renderTemporalCity();
+            this.updateTemporalCityInfo();
+        }
+    }
+
+    stepBackward() {
+        const timelineSlider = document.getElementById('timelineSlider');
+        if (timelineSlider) {
+            const currentValue = parseInt(timelineSlider.value);
+            const step = parseInt(timelineSlider.step) || 10;
+            const newValue = Math.max(0, currentValue - step);
+            timelineSlider.value = newValue;
+            this.currentYear = newValue;
+            this.updateElement('currentYear', this.currentYear);
+            this.renderTemporalCity();
+            this.updateTemporalCityInfo();
+        }
+    }
+
+    stepForward() {
+        const timelineSlider = document.getElementById('timelineSlider');
+        if (timelineSlider) {
+            const currentValue = parseInt(timelineSlider.value);
+            const step = parseInt(timelineSlider.step) || 10;
+            const maxValue = parseInt(timelineSlider.max);
+            const newValue = Math.min(maxValue, currentValue + step);
+            timelineSlider.value = newValue;
+            this.currentYear = newValue;
+            this.updateElement('currentYear', this.currentYear);
+            this.renderTemporalCity();
+            this.updateTemporalCityInfo();
         }
     }
 }
@@ -1060,11 +1304,32 @@ function exportCity() {
     cityGenerator.exportCity();
 }
 
-function playEvolution() {
+function togglePlayPause() {
     if (!cityGenerator) {
         cityGenerator = new MetroCityGenerator();
     }
-    cityGenerator.playEvolution();
+    cityGenerator.togglePlayPause();
+}
+
+function resetTimeline() {
+    if (!cityGenerator) {
+        cityGenerator = new MetroCityGenerator();
+    }
+    cityGenerator.resetTimeline();
+}
+
+function stepBackward() {
+    if (!cityGenerator) {
+        cityGenerator = new MetroCityGenerator();
+    }
+    cityGenerator.stepBackward();
+}
+
+function stepForward() {
+    if (!cityGenerator) {
+        cityGenerator = new MetroCityGenerator();
+    }
+    cityGenerator.stepForward();
 }
 
 // Initialize when page loads

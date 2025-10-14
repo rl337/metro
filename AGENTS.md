@@ -2,7 +2,18 @@
 
 ## Use of Docker
 
-For isolating command line dependencies and execution of commands you will use a Docker container.  If one does not yet exist, create a Dockerfile and as dependencies or command line tools / libraries are needed add them to the docker container.   All execution of local command should happen in the Docker container where the project directory is shared as a volume.
+**MANDATORY: All development work MUST be performed in a Docker container.** 
+
+For isolating command line dependencies and execution of commands you will use a Docker container. If one does not yet exist, create a Dockerfile and as dependencies or command line tools / libraries are needed add them to the docker container. 
+
+**All execution of local commands should happen in the Docker container where the project directory is shared as a volume.** This includes:
+- Running tests (unit tests, integration tests, UI tests)
+- Running validation scripts (run_checks.sh)
+- Running development servers
+- Installing dependencies
+- Any command-line operations
+
+**Do NOT run tests or development commands directly on the host system.** Use the Docker container for all development activities to ensure consistency with the CI/CD environment.
 
 ## Testing and Coverage
 
