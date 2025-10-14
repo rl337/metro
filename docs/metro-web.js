@@ -121,6 +121,7 @@ class MetroCityGenerator {
             // Render the city
             this.renderCity();
             this.updateCityInfo();
+            this.showCityInfo();
             
             this.showStatus('City generated successfully!', 'success');
             
@@ -432,6 +433,20 @@ class MetroCityGenerator {
         }
     }
 
+    showCityInfo() {
+        const cityInfo = document.getElementById('cityInfo');
+        if (cityInfo) {
+            cityInfo.classList.remove('hidden');
+        }
+    }
+
+    hideCityInfo() {
+        const cityInfo = document.getElementById('cityInfo');
+        if (cityInfo) {
+            cityInfo.classList.add('hidden');
+        }
+    }
+
     showStatus(message, type) {
         const status = document.getElementById('status');
         const statusText = document.getElementById('statusText');
@@ -537,6 +552,7 @@ class MetroCityGenerator {
             // Render initial state
             this.renderTemporalCity();
             this.updateTemporalCityInfo();
+            this.showCityInfo();
             
             this.showStatus(`Temporal city generated! Evolution from 0 to ${maxYear} AD`, 'success');
             
