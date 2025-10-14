@@ -52,7 +52,7 @@ jobs:
           import random
           
           # Load the base city configuration
-          with open('city.json', 'r') as f:
+          with open('docs/city.json', 'r') as f:
               city_config = json.load(f)
           
           # Generate additional city variations for the webapp
