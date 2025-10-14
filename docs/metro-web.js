@@ -242,9 +242,8 @@ class MetroCityGenerator {
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw background
-        this.ctx.fillStyle = '#f0f0f0';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // Draw background zones first
+        this.drawBackgroundZones();
 
         // Draw districts
         this.drawDistricts(this.currentCity.districts);
@@ -257,6 +256,64 @@ class MetroCityGenerator {
 
         // Draw legend
         this.drawLegend();
+    }
+
+    drawBackgroundZones() {
+        const ctx = this.ctx;
+        const canvas = this.canvas;
+        
+        // Create a grid-based zone system for the background
+        const gridSize = 20; // Number of grid cells
+        const cellWidth = canvas.width / gridSize;
+        const cellHeight = canvas.height / gridSize;
+        
+        // Zone colors
+        const zoneColors = {
+            residential: '#e8f5e8',  // Light green
+            commercial: '#ffe8e8',   // Light red
+            industrial: '#e8f0ff',   // Light blue
+            mixed: '#f0f0f0',        // Light grey
+            park: '#e8ffe8'          // Very light green
+        };
+        
+        // Generate zone pattern based on city data
+        for (let row = 0; row < gridSize; row++) {
+            for (let col = 0; col < gridSize; col++) {
+                const x = col * cellWidth;
+                const y = row * cellHeight;
+                
+                // Determine zone type based on position and city data
+                let zoneType = this.getZoneTypeForPosition(col, row, gridSize);
+                
+                ctx.fillStyle = zoneColors[zoneType] || zoneColors.mixed;
+                ctx.fillRect(x, y, cellWidth, cellHeight);
+                
+                // Add subtle border
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 0.5;
+                ctx.strokeRect(x, y, cellWidth, cellHeight);
+            }
+        }
+    }
+    
+    getZoneTypeForPosition(col, row, gridSize) {
+        // Create a simple zone pattern
+        const centerX = gridSize / 2;
+        const centerY = gridSize / 2;
+        const distance = Math.sqrt((col - centerX) ** 2 + (row - centerY) ** 2);
+        const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+        const normalizedDistance = distance / maxDistance;
+        
+        // Zone distribution based on distance from center
+        if (normalizedDistance < 0.2) {
+            return 'commercial'; // City center
+        } else if (normalizedDistance < 0.4) {
+            return 'mixed'; // Inner city
+        } else if (normalizedDistance < 0.7) {
+            return 'residential'; // Suburbs
+        } else {
+            return 'park'; // Outer areas
+        }
     }
 
     drawDistricts(districts) {
@@ -345,28 +402,28 @@ class MetroCityGenerator {
         const canvas = this.canvas;
         
         const legendItems = [
-            // Zone types
-            { color: '#ff6b6b', symbol: '■', label: 'Commercial Zone' },
-            { color: '#4ecdc4', symbol: '■', label: 'Residential Zone' },
-            { color: '#45b7d1', symbol: '■', label: 'Industrial Zone' },
-            { color: '#96ceb4', symbol: '■', label: 'Mixed Use Zone' },
-            { color: '#90EE90', symbol: '■', label: 'Park/Green Space' },
+            // Zone types (background)
+            { color: '#ffe8e8', symbol: '■', label: 'Commercial Zone (Background)' },
+            { color: '#e8f5e8', symbol: '■', label: 'Residential Zone (Background)' },
+            { color: '#e8f0ff', symbol: '■', label: 'Industrial Zone (Background)' },
+            { color: '#f0f0f0', symbol: '■', label: 'Mixed Use Zone (Background)' },
+            { color: '#e8ffe8', symbol: '■', label: 'Park/Green Space (Background)' },
+            
+            // District types (overlay)
+            { color: '#ff6b6b', symbol: '■', label: 'Commercial District' },
+            { color: '#4ecdc4', symbol: '■', label: 'Residential District' },
+            { color: '#45b7d1', symbol: '■', label: 'Industrial District' },
+            { color: '#96ceb4', symbol: '■', label: 'Mixed Use District' },
             
             // Infrastructure
             { color: '#666', symbol: '—', label: 'Roads & Streets' },
-            { color: '#ffd700', symbol: '■', label: 'Power Station' },
-            { color: '#00bfff', symbol: '●', label: 'Water Treatment' },
             
-            // Services
-            { color: '#ff0000', symbol: '✚', label: 'Hospital' },
-            { color: '#0000ff', symbol: '■', label: 'School' },
-            { color: '#000080', symbol: '●', label: 'Police Station' },
-            { color: '#ffa500', symbol: '●', label: 'Fire Station' },
-            
-            // Key points
-            { color: '#8B4513', symbol: '★', label: 'Monument/Landmark' },
-            { color: '#800080', symbol: '◆', label: 'Government Building' },
-            { color: '#FFD700', symbol: '●', label: 'Market/Commerce' }
+            // Services (the red circles you're seeing)
+            { color: '#ff0000', symbol: '✚', label: 'Hospital (Red Cross)' },
+            { color: '#0000ff', symbol: '■', label: 'School (Blue Square)' },
+            { color: '#000080', symbol: '●', label: 'Police Station (Dark Blue Circle)' },
+            { color: '#ffa500', symbol: '●', label: 'Fire Station (Orange Circle)' },
+            { color: '#FFD700', symbol: '●', label: 'Market (Gold Circle)' }
         ];
         
         const legendX = canvas.width - 200;
