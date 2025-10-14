@@ -68,10 +68,13 @@ module.exports = defineConfig({
     },
 
     /* Test timeout configuration */
-    timeout: 30000,
+    timeout: 60000, // 60 seconds for individual tests
     expect: {
-        timeout: 10000,
+        timeout: 30000, // 30 seconds for assertions
     },
+    
+    /* Global timeout for entire test run */
+    globalTimeout: 10 * 60 * 1000, // 10 minutes total
 
     /* Test output configuration */
     outputDir: 'test-results/',

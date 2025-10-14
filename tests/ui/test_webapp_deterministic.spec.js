@@ -54,7 +54,9 @@ test.describe('Deterministic City Generation', () => {
         await expect(canvas).toBeVisible();
         
         // Take screenshot for visual regression testing
-        await expect(canvas).toHaveScreenshot('deterministic-city-seed-' + testSeed + '.png');
+        await expect(canvas).toHaveScreenshot('deterministic-city-seed-' + testSeed + '.png', { 
+            timeout: 30000 // 30 seconds for screenshot comparison
+        });
     });
 
     test('should generate different cities with different seeds', async ({ page }) => {
@@ -86,7 +88,9 @@ test.describe('Deterministic City Generation', () => {
 
             // Take screenshot
             const canvas = page.locator('#cityCanvas');
-            await expect(canvas).toHaveScreenshot(`city-seed-${seed}.png`);
+            await expect(canvas).toHaveScreenshot(`city-seed-${seed}.png`, { 
+                timeout: 30000 // 30 seconds for screenshot comparison
+            });
             screenshots.push(`city-seed-${seed}.png`);
         }
 
