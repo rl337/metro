@@ -187,6 +187,20 @@ fi
 
 echo ""
 echo "=========================================="
+echo "JavaScript Unit Tests"
+echo "=========================================="
+
+# Check for Node.js and npm
+if command_exists node && command_exists npm; then
+    print_status "Running JavaScript unit tests..."
+    npm run test:js
+    print_status "JavaScript unit tests completed"
+else
+    print_warning "Node.js/npm not available, skipping JavaScript tests"
+fi
+
+echo ""
+echo "=========================================="
 echo "UI Testing (Playwright) - TEMPORARILY DISABLED"
 echo "=========================================="
 

@@ -1,0 +1,388 @@
+{
+  "config": {
+    "configFile": "/Users/rlee/dev/metro/playwright.live.config.js",
+    "rootDir": "/Users/rlee/dev/metro/tests/ui",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 5
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report-live"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results-live.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/rlee/dev/metro/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/rlee/dev/metro/tests/ui",
+        "testIgnore": [],
+        "testMatch": [
+          "test_live_site.spec.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/rlee/dev/metro/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/Users/rlee/dev/metro/tests/ui",
+        "testIgnore": [],
+        "testMatch": [
+          "test_live_site.spec.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/rlee/dev/metro/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/Users/rlee/dev/metro/tests/ui",
+        "testIgnore": [],
+        "testMatch": [
+          "test_live_site.spec.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/rlee/dev/metro/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/Users/rlee/dev/metro/tests/ui",
+        "testIgnore": [],
+        "testMatch": [
+          "test_live_site.spec.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/rlee/dev/metro/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "/Users/rlee/dev/metro/tests/ui",
+        "testIgnore": [],
+        "testMatch": [
+          "test_live_site.spec.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.56.0",
+    "workers": 8,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "test_live_site.spec.js",
+      "file": "test_live_site.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Live Site Evaluation",
+          "file": "test_live_site.spec.js",
+          "line": 11,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display streets and zones properly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "interrupted",
+                      "duration": 38858,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-19T14:41:54.734Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-chromium/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f09a8a47f008d76a22f4-7ee361e2b8c4a4825fed",
+              "file": "test_live_site.spec.js",
+              "line": 102,
+              "column": 5
+            },
+            {
+              "title": "should display streets and zones properly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "interrupted",
+                      "duration": 7892,
+                      "error": {
+                        "message": "Error: page.waitForTimeout: Test ended.",
+                        "stack": "Error: page.waitForTimeout: Test ended.\n    at /Users/rlee/dev/metro/tests/ui/test_live_site.spec.js:110:20",
+                        "location": {
+                          "file": "/Users/rlee/dev/metro/tests/ui/test_live_site.spec.js",
+                          "column": 20,
+                          "line": 110
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 108 |\u001b[39m\n \u001b[90m 109 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'#status.success'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m         \u001b[90m// Check that city info is populated\u001b[39m\n \u001b[90m 113 |\u001b[39m         \u001b[36mconst\u001b[39m population \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'#cityPopulation'\u001b[39m)\u001b[33m.\u001b[39mtextContent()\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/rlee/dev/metro/tests/ui/test_live_site.spec.js",
+                            "column": 20,
+                            "line": 110
+                          },
+                          "message": "Error: page.waitForTimeout: Test ended.\n\n\u001b[0m \u001b[90m 108 |\u001b[39m\n \u001b[90m 109 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'#status.success'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m         \u001b[90m// Check that city info is populated\u001b[39m\n \u001b[90m 113 |\u001b[39m         \u001b[36mconst\u001b[39m population \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'#cityPopulation'\u001b[39m)\u001b[33m.\u001b[39mtextContent()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/rlee/dev/metro/tests/ui/test_live_site.spec.js:110:20\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-19T14:41:54.775Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-firefox/video.webm"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/rlee/dev/metro/tests/ui/test_live_site.spec.js",
+                        "column": 20,
+                        "line": 110
+                      }
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f09a8a47f008d76a22f4-b52896424f0dfb9937f7",
+              "file": "test_live_site.spec.js",
+              "line": 102,
+              "column": 5
+            },
+            {
+              "title": "should display streets and zones properly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "interrupted",
+                      "duration": 36873,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-19T14:41:54.736Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-webkit/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-webkit/video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f09a8a47f008d76a22f4-bc1c828932dd1a42e9fd",
+              "file": "test_live_site.spec.js",
+              "line": 102,
+              "column": 5
+            },
+            {
+              "title": "should display streets and zones properly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 9992,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-19T14:41:54.743Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f09a8a47f008d76a22f4-e6b762f87f87f9530c05",
+              "file": "test_live_site.spec.js",
+              "line": 102,
+              "column": 5
+            },
+            {
+              "title": "should display streets and zones properly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "interrupted",
+                      "duration": 10336,
+                      "error": {
+                        "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> /Users/rlee/Library/Caches/ms-playwright/webkit-2215/pw_run.sh --inspector-pipe --headless --no-startup-window\n<launched> pid=51612\n[pid=51612] <gracefully close start>",
+                        "stack": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> /Users/rlee/Library/Caches/ms-playwright/webkit-2215/pw_run.sh --inspector-pipe --headless --no-startup-window\n<launched> pid=51612\n[pid=51612] <gracefully close start>"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> /Users/rlee/Library/Caches/ms-playwright/webkit-2215/pw_run.sh --inspector-pipe --headless --no-startup-window\n<launched> pid=51612\n[pid=51612] <gracefully close start>"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-10-19T14:41:54.748Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f09a8a47f008d76a22f4-71c3113d63c32098f007",
+              "file": "test_live_site.spec.js",
+              "line": 102,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-10-19T14:41:53.209Z",
+    "duration": 41306.479,
+    "expected": 1,
+    "skipped": 4,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
