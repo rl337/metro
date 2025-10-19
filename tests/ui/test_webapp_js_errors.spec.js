@@ -178,6 +178,42 @@ test.describe('JavaScript Error Detection', () => {
         expect(specificErrors).toHaveLength(0);
     });
 
+    test('should not have infrastructure.services.forEach errors', async ({ page }) => {
+        // This test specifically checks for the infrastructure.services.forEach error
+        // that was reported in the issue
+        
+        // Generate a city with various parameters to test different data structures
+        const testCases = [
+            { seed: '1234567890', population: '50000', citySize: '5' },
+            { seed: '9876543210', population: '100000', citySize: '10' },
+            { seed: '5555555555', population: '25000', citySize: '7' }
+        ];
+
+        for (const testCase of testCases) {
+            // Reset error arrays for each test case
+            consoleErrors = [];
+            pageErrors = [];
+
+            await page.fill('#seed', testCase.seed);
+            await page.fill('#population', testCase.population);
+            await page.fill('#citySize', testCase.citySize);
+            await page.click('button[onclick="generateCity()"]');
+            
+            // Wait for generation to complete
+            await page.waitForSelector('#status.success', { timeout: 10000 });
+            await page.waitForTimeout(1000);
+
+            // Check for the specific infrastructure.services error
+            const infrastructureErrors = consoleErrors.filter(error => 
+                error.message.includes('infrastructure.services.forEach') ||
+                error.message.includes('is not a function') ||
+                error.message.includes('Cannot read properties of undefined')
+            );
+
+            expect(infrastructureErrors).toHaveLength(0);
+        }
+    });
+
     test('should handle rapid interactions without errors', async ({ page }) => {
         // Test rapid clicking and input changes
         await page.fill('#seed', '2222222222');

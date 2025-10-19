@@ -129,6 +129,12 @@ class CitySimulator:
 
     def _generate_city_layout(self, population: int, city_size: float) -> CityLayout:
         """Generate the complete city layout."""
+        from .roman_grid import RomanGridSystem
+        
+        # Create Roman grid system
+        roman_grid = RomanGridSystem(city_size, self.seed_manager)
+        roman_grid.create_founding_grid()
+        
         # Calculate number of districts based on population
         district_count = self._calculate_district_count(population)
 
@@ -138,8 +144,8 @@ class CitySimulator:
         # Generate zones within districts
         zones = self._generate_zones(districts, population)
 
-        # Generate infrastructure
-        infrastructure = self._generate_infrastructure(districts, city_size)
+        # Generate infrastructure using Roman grid
+        infrastructure = self._generate_infrastructure_with_roman_grid(districts, city_size, roman_grid)
 
         # Generate demographics
         demographics = self._generate_demographics(districts, population)
@@ -364,6 +370,50 @@ class CitySimulator:
                 zones.append(zone)
 
         return zones
+
+    def _generate_infrastructure_with_roman_grid(
+        self, districts: List[District], city_size: float, roman_grid: 'RomanGridSystem'
+    ) -> Dict[str, Any]:
+        """Generate city infrastructure using Roman grid system."""
+        infra_rng = self.seed_manager.generator.get_rng("infrastructure")
+
+        # Get roads from Roman grid
+        roman_roads = roman_grid.get_roads()
+        
+        # Convert Roman grid roads to our format
+        roads = []
+        
+        # Add cardos (north-south roads)
+        for cardo in roman_roads["cardos"]:
+            roads.append({
+                "type": "arterial",
+                "x1": cardo[0], "y1": cardo[1],
+                "x2": cardo[2], "y2": cardo[3],
+                "width": 20,  # Main roads are wider
+                "importance": 5
+            })
+        
+        # Add decumani (east-west roads)
+        for decumanus in roman_roads["decumani"]:
+            roads.append({
+                "type": "arterial", 
+                "x1": decumanus[0], "y1": decumanus[1],
+                "x2": decumanus[2], "y2": decumanus[3],
+                "width": 20,  # Main roads are wider
+                "importance": 5
+            })
+
+        # Generate additional local roads
+        local_roads = self._generate_road_network(districts, city_size, infra_rng)
+        roads.extend(local_roads)
+
+        # Generate utilities
+        utilities = self._generate_utilities(districts, infra_rng)
+
+        # Generate public services
+        services = self._generate_public_services(districts, infra_rng)
+
+        return {"roads": roads, "utilities": utilities, "services": services}
 
     def _generate_infrastructure(
         self, districts: List[District], city_size: float
