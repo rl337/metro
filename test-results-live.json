@@ -137,7 +137,7 @@
           "column": 6,
           "specs": [
             {
-              "title": "should generate a city without JavaScript errors",
+              "title": "should display streets and zones properly",
               "ok": true,
               "tags": [],
               "tests": [
@@ -151,27 +151,38 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4946,
+                      "status": "interrupted",
+                      "duration": 38858,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-19T14:41:30.078Z",
+                      "startTime": "2025-10-19T14:41:54.734Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-chromium/video.webm"
+                        }
+                      ]
                     }
                   ],
-                  "status": "expected"
+                  "status": "skipped"
                 }
               ],
-              "id": "f09a8a47f008d76a22f4-37f993a9dd4292598d09",
+              "id": "f09a8a47f008d76a22f4-7ee361e2b8c4a4825fed",
               "file": "test_live_site.spec.js",
-              "line": 76,
+              "line": 102,
               "column": 5
             },
             {
-              "title": "should generate a city without JavaScript errors",
+              "title": "should display streets and zones properly",
               "ok": true,
               "tags": [],
               "tests": [
@@ -185,27 +196,62 @@
                     {
                       "workerIndex": 1,
                       "parallelIndex": 1,
-                      "status": "passed",
-                      "duration": 8050,
-                      "errors": [],
+                      "status": "interrupted",
+                      "duration": 7892,
+                      "error": {
+                        "message": "Error: page.waitForTimeout: Test ended.",
+                        "stack": "Error: page.waitForTimeout: Test ended.\n    at /Users/rlee/dev/metro/tests/ui/test_live_site.spec.js:110:20",
+                        "location": {
+                          "file": "/Users/rlee/dev/metro/tests/ui/test_live_site.spec.js",
+                          "column": 20,
+                          "line": 110
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 108 |\u001b[39m\n \u001b[90m 109 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'#status.success'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m         \u001b[90m// Check that city info is populated\u001b[39m\n \u001b[90m 113 |\u001b[39m         \u001b[36mconst\u001b[39m population \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'#cityPopulation'\u001b[39m)\u001b[33m.\u001b[39mtextContent()\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/rlee/dev/metro/tests/ui/test_live_site.spec.js",
+                            "column": 20,
+                            "line": 110
+                          },
+                          "message": "Error: page.waitForTimeout: Test ended.\n\n\u001b[0m \u001b[90m 108 |\u001b[39m\n \u001b[90m 109 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'#status.success'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m2000\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m         \u001b[90m// Check that city info is populated\u001b[39m\n \u001b[90m 113 |\u001b[39m         \u001b[36mconst\u001b[39m population \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'#cityPopulation'\u001b[39m)\u001b[33m.\u001b[39mtextContent()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/rlee/dev/metro/tests/ui/test_live_site.spec.js:110:20\u001b[22m"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-19T14:41:30.101Z",
+                      "startTime": "2025-10-19T14:41:54.775Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-firefox/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-firefox/video.webm"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/rlee/dev/metro/tests/ui/test_live_site.spec.js",
+                        "column": 20,
+                        "line": 110
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "skipped"
                 }
               ],
-              "id": "f09a8a47f008d76a22f4-c648636d2c7b277b1b45",
+              "id": "f09a8a47f008d76a22f4-b52896424f0dfb9937f7",
               "file": "test_live_site.spec.js",
-              "line": 76,
+              "line": 102,
               "column": 5
             },
             {
-              "title": "should generate a city without JavaScript errors",
+              "title": "should display streets and zones properly",
               "ok": true,
               "tags": [],
               "tests": [
@@ -219,27 +265,38 @@
                     {
                       "workerIndex": 2,
                       "parallelIndex": 2,
-                      "status": "passed",
-                      "duration": 7175,
+                      "status": "interrupted",
+                      "duration": 36873,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-19T14:41:30.078Z",
+                      "startTime": "2025-10-19T14:41:54.736Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-webkit/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/rlee/dev/metro/test-results/test_live_site-Live-Site-E-c4fad--streets-and-zones-properly-webkit/video.webm"
+                        }
+                      ]
                     }
                   ],
-                  "status": "expected"
+                  "status": "skipped"
                 }
               ],
-              "id": "f09a8a47f008d76a22f4-f8feed2daf1b189a0b42",
+              "id": "f09a8a47f008d76a22f4-bc1c828932dd1a42e9fd",
               "file": "test_live_site.spec.js",
-              "line": 76,
+              "line": 102,
               "column": 5
             },
             {
-              "title": "should generate a city without JavaScript errors",
+              "title": "should display streets and zones properly",
               "ok": true,
               "tags": [],
               "tests": [
@@ -254,12 +311,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 3,
                       "status": "passed",
-                      "duration": 5093,
+                      "duration": 9992,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-19T14:41:30.108Z",
+                      "startTime": "2025-10-19T14:41:54.743Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -267,13 +324,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "f09a8a47f008d76a22f4-9f2298c79e29102a21f5",
+              "id": "f09a8a47f008d76a22f4-e6b762f87f87f9530c05",
               "file": "test_live_site.spec.js",
-              "line": 76,
+              "line": 102,
               "column": 5
             },
             {
-              "title": "should generate a city without JavaScript errors",
+              "title": "should display streets and zones properly",
               "ok": true,
               "tags": [],
               "tests": [
@@ -287,23 +344,31 @@
                     {
                       "workerIndex": 4,
                       "parallelIndex": 4,
-                      "status": "passed",
-                      "duration": 6572,
-                      "errors": [],
+                      "status": "interrupted",
+                      "duration": 10336,
+                      "error": {
+                        "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> /Users/rlee/Library/Caches/ms-playwright/webkit-2215/pw_run.sh --inspector-pipe --headless --no-startup-window\n<launched> pid=51612\n[pid=51612] <gracefully close start>",
+                        "stack": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> /Users/rlee/Library/Caches/ms-playwright/webkit-2215/pw_run.sh --inspector-pipe --headless --no-startup-window\n<launched> pid=51612\n[pid=51612] <gracefully close start>"
+                      },
+                      "errors": [
+                        {
+                          "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> /Users/rlee/Library/Caches/ms-playwright/webkit-2215/pw_run.sh --inspector-pipe --headless --no-startup-window\n<launched> pid=51612\n[pid=51612] <gracefully close start>"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-10-19T14:41:30.098Z",
+                      "startTime": "2025-10-19T14:41:54.748Z",
                       "annotations": [],
                       "attachments": []
                     }
                   ],
-                  "status": "expected"
+                  "status": "skipped"
                 }
               ],
-              "id": "f09a8a47f008d76a22f4-5c32fdea8439d627300d",
+              "id": "f09a8a47f008d76a22f4-71c3113d63c32098f007",
               "file": "test_live_site.spec.js",
-              "line": 76,
+              "line": 102,
               "column": 5
             }
           ]
@@ -313,10 +378,10 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-10-19T14:41:28.150Z",
-    "duration": 15668.08,
-    "expected": 5,
-    "skipped": 0,
+    "startTime": "2025-10-19T14:41:53.209Z",
+    "duration": 41306.479,
+    "expected": 1,
+    "skipped": 4,
     "unexpected": 0,
     "flaky": 0
   }

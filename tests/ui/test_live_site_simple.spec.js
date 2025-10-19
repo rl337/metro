@@ -55,10 +55,10 @@ test.describe('Live Site JavaScript Error Check', () => {
         await page.fill('#seed', '1234567890');
         await page.fill('#population', '50000');
         await page.fill('#citySize', '10');
-        
+
         // Generate city
         await page.click('button[onclick="generateCity()"]');
-        
+
         // Wait for generation to complete (with longer timeout)
         try {
             await page.waitForSelector('#status.success', { timeout: 30000 });
@@ -71,7 +71,7 @@ test.describe('Live Site JavaScript Error Check', () => {
         }
 
         // Check for the specific error that was reported
-        const infrastructureErrors = consoleErrors.filter(error => 
+        const infrastructureErrors = consoleErrors.filter(error =>
             error.message.includes('infrastructure.services.forEach') ||
             error.message.includes('is not a function') ||
             error.message.includes('Cannot read properties of undefined') ||
@@ -79,9 +79,9 @@ test.describe('Live Site JavaScript Error Check', () => {
         );
 
         expect(infrastructureErrors).toHaveLength(0);
-        
+
         // Also check for any other JavaScript errors
-        const allErrors = consoleErrors.filter(error => 
+        const allErrors = consoleErrors.filter(error =>
             error.message.includes('Error generating city') ||
             error.message.includes('null is not an object') ||
             error.message.includes('Cannot read property')
@@ -95,12 +95,12 @@ test.describe('Live Site JavaScript Error Check', () => {
         await page.route('**/api/simulate-city', async route => {
             const response = await route.fetch();
             const data = await response.json();
-            
+
             // Simulate the original error condition
             if (data.layout && data.layout.infrastructure) {
                 data.layout.infrastructure.services = null;
             }
-            
+
             await route.fulfill({
                 response,
                 body: JSON.stringify(data)
@@ -111,12 +111,12 @@ test.describe('Live Site JavaScript Error Check', () => {
         await page.fill('#population', '30000');
         await page.fill('#citySize', '8');
         await page.click('button[onclick="generateCity()"]');
-        
+
         // Wait a bit for any errors to surface
         await page.waitForTimeout(5000);
 
         // Check for the specific error that was reported
-        const infrastructureErrors = consoleErrors.filter(error => 
+        const infrastructureErrors = consoleErrors.filter(error =>
             error.message.includes('infrastructure.services.forEach') ||
             error.message.includes('is not a function') ||
             error.message.includes('Cannot read properties of null')

@@ -20,12 +20,16 @@
         "test:live": "playwright test --config=playwright.live.config.js",
         "test:live:headed": "playwright test --config=playwright.live.config.js --headed",
         "test:live:debug": "playwright test --config=playwright.live.config.js --debug",
+        "test:js": "jest",
+        "test:js:watch": "jest --watch",
+        "test:js:coverage": "jest --coverage",
         "install:browsers": "playwright install",
         "show-report": "playwright show-report",
         "show-report:live": "playwright show-report playwright-report-live",
         "test:update-snapshots": "playwright test --update-snapshots"
     },
     "devDependencies": {
-        "@playwright/test": "^1.40.0"
+        "@playwright/test": "^1.40.0",
+        "jest": "^29.0.0"
     }
 }
