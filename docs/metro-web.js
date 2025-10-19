@@ -79,7 +79,7 @@ class MetroCityGenerator {
         this.currentYear = 0;
         this.isPlaying = false;
         this.playInterval = null;
-
+        
         // Set up canvas
         this.setupCanvas();
         this.setupTemporalControls();
@@ -91,10 +91,10 @@ class MetroCityGenerator {
             const container = this.canvas.parentElement;
             const containerWidth = container.clientWidth - 40; // Account for padding
             const aspectRatio = 4 / 3;
-
+            
             this.canvas.width = Math.min(containerWidth, 1200);
             this.canvas.height = this.canvas.width / aspectRatio;
-
+            
             if (this.currentCity) {
                 this.renderCity();
             }
@@ -112,7 +112,7 @@ class MetroCityGenerator {
         this.showStatus('Generating city...', 'loading');
 
         try {
-            // Call the Python backend to generate the city
+            // Try to call the Python backend first
             const response = await fetch('/api/simulate-city', {
                 method: 'POST',
                 headers: {
@@ -130,25 +130,208 @@ class MetroCityGenerator {
             }
 
             const cityData = await response.json();
-
+            
             if (cityData.error) {
                 throw new Error(cityData.error);
             }
-
+            
             // Store the city data
             this.currentCity = cityData;
-
+            
             // Render the city
             this.renderCity();
             this.updateCityInfo();
             this.showCityInfo();
-
+            
             this.showStatus('City generated successfully!', 'success');
-
+            
         } catch (error) {
-            console.error('Error generating city:', error);
-            this.showStatus('Error generating city: ' + error.message, 'error');
+            console.warn('Backend API not available, falling back to client-side generation:', error.message);
+            
+            // Fallback to client-side generation
+            try {
+                this.currentCity = this.generateCityClientSide(population, masterSeed, citySize);
+                
+                // Render the city
+                this.renderCity();
+                this.updateCityInfo();
+                this.showCityInfo();
+                
+                this.showStatus('City generated successfully (client-side)!', 'success');
+                
+            } catch (fallbackError) {
+                console.error('Error in client-side generation:', fallbackError);
+                this.showStatus('Error generating city: ' + fallbackError.message, 'error');
+            }
         }
+    }
+
+    generateCityClientSide(population, masterSeed, citySize) {
+        // Set up the seed generator
+        this.seedGenerator.setMasterSeed(masterSeed);
+        
+        // Generate city data structure compatible with backend format
+        const cityData = {
+            metadata: {
+                population: population,
+                area: citySize * citySize,
+                master_seed: masterSeed,
+                generated_at: new Date().toISOString()
+            },
+            layout: {
+                width: citySize,
+                height: citySize,
+                total_area: citySize * citySize,
+                districts: this.generateDistrictsClientSide(population, citySize),
+                zones: [],
+                infrastructure: {
+                    roads: this.generateRomanGridClientSide(citySize),
+                    services: this.generateServicesClientSide(population, citySize),
+                    utilities: []
+                },
+                demographics: {
+                    total_population: population,
+                    age_distribution: this.generateAgeDistribution(population),
+                    income_distribution: this.generateIncomeDistribution(population)
+                }
+            }
+        };
+
+        // Generate zones after districts
+        cityData.layout.zones = this.generateZonesClientSide(cityData.layout.districts);
+        
+        return cityData;
+    }
+
+    generateDistrictsClientSide(population, citySize) {
+        const districts = [];
+        const districtCount = Math.max(1, Math.floor(population / 10000)); // ~10k people per district
+        const rng = this.seedGenerator.getRNG('districts');
+        
+        for (let i = 0; i < districtCount; i++) {
+            const districtTypes = ['residential', 'commercial', 'industrial', 'mixed'];
+            const type = rng.choice(districtTypes);
+            
+            const width = citySize / Math.ceil(Math.sqrt(districtCount));
+            const height = citySize / Math.ceil(Math.sqrt(districtCount));
+            const x = (i % Math.ceil(Math.sqrt(districtCount))) * width;
+            const y = Math.floor(i / Math.ceil(Math.sqrt(districtCount))) * height;
+            
+            districts.push({
+                name: `${type.charAt(0).toUpperCase() + type.slice(1)} District ${i + 1}`,
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                zone_type: type,
+                population: Math.floor(population / districtCount)
+            });
+        }
+        
+        return districts;
+    }
+
+    generateZonesClientSide(districts) {
+        const zones = [];
+        const rng = this.seedGenerator.getRNG('zones');
+        
+        districts.forEach(district => {
+            const zoneCount = rng.randint(2, 6); // 2-6 zones per district
+            
+            for (let i = 0; i < zoneCount; i++) {
+                const zoneWidth = district.width / Math.ceil(Math.sqrt(zoneCount));
+                const zoneHeight = district.height / Math.ceil(Math.sqrt(zoneCount));
+                const x = district.x + (i % Math.ceil(Math.sqrt(zoneCount))) * zoneWidth;
+                const y = district.y + Math.floor(i / Math.ceil(Math.sqrt(zoneCount))) * zoneHeight;
+                
+                zones.push({
+                    x: x,
+                    y: y,
+                    width: zoneWidth,
+                    height: zoneHeight,
+                    zone_type: district.zone_type,
+                    population: Math.floor(district.population / zoneCount)
+                });
+            }
+        });
+        
+        return zones;
+    }
+
+    generateRomanGridClientSide(citySize) {
+        const roads = [];
+        const rng = this.seedGenerator.getRNG('roman_grid');
+        
+        // Generate cardos (north-south roads)
+        const cardoCount = rng.randint(3, 8);
+        for (let i = 0; i < cardoCount; i++) {
+            const x = (citySize / (cardoCount + 1)) * (i + 1);
+            roads.push({
+                x1: x, y1: 0,
+                x2: x, y2: citySize,
+                width: 20,
+                type: 'arterial',
+                importance: 5
+            });
+        }
+        
+        // Generate decumani (east-west roads)
+        const decumanusCount = rng.randint(3, 8);
+        for (let i = 0; i < decumanusCount; i++) {
+            const y = (citySize / (decumanusCount + 1)) * (i + 1);
+            roads.push({
+                x1: 0, y1: y,
+                x2: citySize, y2: y,
+                width: 20,
+                type: 'arterial',
+                importance: 5
+            });
+        }
+        
+        return roads;
+    }
+
+    generateServicesClientSide(population, citySize) {
+        const services = [];
+        const rng = this.seedGenerator.getRNG('services');
+        
+        const serviceTypes = [
+            { type: 'hospital', count: Math.max(1, Math.floor(population / 50000)) },
+            { type: 'school', count: Math.max(1, Math.floor(population / 10000)) },
+            { type: 'police', count: Math.max(1, Math.floor(population / 25000)) },
+            { type: 'fire', count: Math.max(1, Math.floor(population / 30000)) },
+            { type: 'market', count: Math.max(1, Math.floor(population / 15000)) }
+        ];
+        
+        serviceTypes.forEach(serviceType => {
+            for (let i = 0; i < serviceType.count; i++) {
+                services.push({
+                    x: rng.uniform(0, citySize),
+                    y: rng.uniform(0, citySize),
+                    type: serviceType.type
+                });
+            }
+        });
+        
+        return services;
+    }
+
+    generateAgeDistribution(population) {
+        return {
+            '0-17': Math.floor(population * 0.20),
+            '18-34': Math.floor(population * 0.25),
+            '35-54': Math.floor(population * 0.30),
+            '55-64': Math.floor(population * 0.15),
+            '65+': Math.floor(population * 0.10)
+        };
+    }
+
+    generateIncomeDistribution(population) {
+        return {
+            'low': Math.floor(population * 0.30),
+            'medium': Math.floor(population * 0.50),
+            'high': Math.floor(population * 0.20)
+        };
     }
 
     async simulateCity(population, citySize) {
@@ -168,10 +351,10 @@ class MetroCityGenerator {
             const x = this.seedGenerator.uniform(0, citySize);
             const y = this.seedGenerator.uniform(0, citySize);
             const size = this.seedGenerator.uniform(0.5, 2.0);
-
+            
             const districtTypes = ['residential', 'commercial', 'industrial', 'mixed'];
             const type = this.seedGenerator.choice(districtTypes);
-
+            
             city.districts.push({
                 id: `district_${i}`,
                 name: `${type.charAt(0).toUpperCase() + type.slice(1)} District ${i + 1}`,
@@ -215,14 +398,14 @@ class MetroCityGenerator {
 
     generateInfrastructure(citySize) {
         const infrastructure = [];
-
+        
         // Add some basic roads
         for (let i = 0; i < 5; i++) {
             const x1 = this.seedGenerator.uniform(0, citySize);
             const y1 = this.seedGenerator.uniform(0, citySize);
             const x2 = this.seedGenerator.uniform(0, citySize);
             const y2 = this.seedGenerator.uniform(0, citySize);
-
+            
             infrastructure.push({
                 type: 'road',
                 x1: x1, y1: y1, x2: x2, y2: y2,
@@ -237,14 +420,14 @@ class MetroCityGenerator {
     generateServices(population, citySize) {
         const services = [];
         const numServices = Math.max(1, Math.floor(population / 10000));
-
+        
         for (let i = 0; i < numServices; i++) {
             const x = this.seedGenerator.uniform(0, citySize);
             const y = this.seedGenerator.uniform(0, citySize);
-
+            
             const serviceTypes = ['hospital', 'school', 'police', 'fire', 'market'];
             const type = this.seedGenerator.choice(serviceTypes);
-
+            
             services.push({
                 id: `service_${i}`,
                 type: type,
@@ -297,12 +480,12 @@ class MetroCityGenerator {
     drawBackgroundZones() {
         const ctx = this.ctx;
         const canvas = this.canvas;
-
+        
         // Create a grid-based zone system for the background
         const gridSize = 20; // Number of grid cells
         const cellWidth = canvas.width / gridSize;
         const cellHeight = canvas.height / gridSize;
-
+        
         // Zone colors
         const zoneColors = {
             residential: '#e8f5e8',  // Light green
@@ -311,19 +494,19 @@ class MetroCityGenerator {
             mixed: '#f0f0f0',        // Light grey
             park: '#e8ffe8'          // Very light green
         };
-
+        
         // Generate zone pattern based on city data
         for (let row = 0; row < gridSize; row++) {
             for (let col = 0; col < gridSize; col++) {
                 const x = col * cellWidth;
                 const y = row * cellHeight;
-
+                
                 // Determine zone type based on position and city data
                 let zoneType = this.getZoneTypeForPosition(col, row, gridSize);
-
+                
                 ctx.fillStyle = zoneColors[zoneType] || zoneColors.mixed;
                 ctx.fillRect(x, y, cellWidth, cellHeight);
-
+                
                 // Add subtle border
                 ctx.strokeStyle = '#ddd';
                 ctx.lineWidth = 0.5;
@@ -331,7 +514,7 @@ class MetroCityGenerator {
             }
         }
     }
-
+    
     getZoneTypeForPosition(col, row, gridSize) {
         // Create a simple zone pattern
         const centerX = gridSize / 2;
@@ -339,7 +522,7 @@ class MetroCityGenerator {
         const distance = Math.sqrt((col - centerX) ** 2 + (row - centerY) ** 2);
         const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
         const normalizedDistance = distance / maxDistance;
-
+        
         // Zone distribution based on distance from center
         if (normalizedDistance < 0.2) {
             return 'commercial'; // City center
@@ -528,7 +711,7 @@ class MetroCityGenerator {
     drawLegend() {
         const ctx = this.ctx;
         const canvas = this.canvas;
-
+        
         const legendItems = [
             // Zone types (background)
             { color: '#ffe8e8', symbol: '■', label: 'Commercial Zone (Background)' },
@@ -536,16 +719,16 @@ class MetroCityGenerator {
             { color: '#e8f0ff', symbol: '■', label: 'Industrial Zone (Background)' },
             { color: '#f0f0f0', symbol: '■', label: 'Mixed Use Zone (Background)' },
             { color: '#e8ffe8', symbol: '■', label: 'Park/Green Space (Background)' },
-
+            
             // District types (overlay)
             { color: '#ff6b6b', symbol: '■', label: 'Commercial District' },
             { color: '#4ecdc4', symbol: '■', label: 'Residential District' },
             { color: '#45b7d1', symbol: '■', label: 'Industrial District' },
             { color: '#96ceb4', symbol: '■', label: 'Mixed Use District' },
-
+            
             // Infrastructure
             { color: '#666', symbol: '—', label: 'Roads & Streets' },
-
+            
             // Services (the red circles you're seeing)
             { color: '#ff0000', symbol: '✚', label: 'Hospital (Red Cross)' },
             { color: '#0000ff', symbol: '■', label: 'School (Blue Square)' },
@@ -553,41 +736,41 @@ class MetroCityGenerator {
             { color: '#ffa500', symbol: '●', label: 'Fire Station (Orange Circle)' },
             { color: '#FFD700', symbol: '●', label: 'Market (Gold Circle)' }
         ];
-
+        
         const legendX = canvas.width - 200;
         const legendY = 20;
         const itemHeight = 18;
         const legendWidth = 180;
         const legendHeight = legendItems.length * itemHeight + 20;
-
+        
         // Background
         ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
         ctx.fillRect(legendX - 10, legendY - 10, legendWidth, legendHeight);
-
+        
         // Border
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(legendX - 10, legendY - 10, legendWidth, legendHeight);
-
+        
         // Title
         ctx.fillStyle = '#333';
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('City Legend', legendX + legendWidth / 2 - 10, legendY + 5);
-
+        
         // Legend items
         ctx.font = '12px Arial';
         ctx.textAlign = 'left';
-
+        
         legendItems.forEach((item, index) => {
             const y = legendY + 20 + index * itemHeight;
-
+            
             // Draw symbol
             ctx.fillStyle = item.color;
             ctx.font = '16px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(item.symbol, legendX + 15, y + 5);
-
+            
             // Draw label
             ctx.fillStyle = '#333';
             ctx.font = '11px Arial';
@@ -644,11 +827,11 @@ class MetroCityGenerator {
     showStatus(message, type) {
         const status = document.getElementById('status');
         const statusText = document.getElementById('statusText');
-
+        
         statusText.textContent = message;
         status.className = `status ${type}`;
         status.classList.remove('hidden');
-
+        
         // Hide after 3 seconds for success messages
         if (type === 'success') {
             setTimeout(() => {
@@ -694,12 +877,12 @@ class MetroCityGenerator {
         const temporalControls = document.getElementById('temporalControls');
         const timelineSlider = document.getElementById('timelineSlider');
         const currentYearSpan = document.getElementById('currentYear');
-
+        
         if (!simulationMode || !temporalControls || !timelineSlider || !currentYearSpan) {
             console.warn('Temporal controls not found, skipping setup');
             return;
         }
-
+        
         // Show/hide temporal controls based on mode
         simulationMode.addEventListener('change', (e) => {
             if (e.target.value === 'temporal') {
@@ -714,7 +897,7 @@ class MetroCityGenerator {
                 }
             }
         });
-
+        
         // Timeline slider
         timelineSlider.addEventListener('input', (e) => {
             this.currentYear = parseInt(e.target.value);
@@ -722,7 +905,7 @@ class MetroCityGenerator {
             this.renderTemporalCity();
         });
     }
-
+    
     async generateTemporalCity() {
         const population = parseInt(document.getElementById('population').value);
         const masterSeed = parseInt(document.getElementById('seed').value);
@@ -733,29 +916,29 @@ class MetroCityGenerator {
         try {
             // Create hierarchical seed system
             this.seedGenerator.setMasterSeed(masterSeed);
-
+            
             // Generate temporal city data
             this.temporalData = await this.simulateTemporalCity(population, citySize);
-
+            
             // Set up timeline slider
             const timelineSlider = document.getElementById('timelineSlider');
             const maxYear = Math.max(...this.temporalData.timeline.map(state => state.year));
             timelineSlider.max = maxYear;
             timelineSlider.value = 0;
-
+            
             // Render initial state
             this.renderTemporalCity();
             this.updateTemporalCityInfo();
             this.showCityInfo();
-
+            
             this.showStatus(`Temporal city generated! Evolution from 0 to ${maxYear} AD`, 'success');
-
+            
         } catch (error) {
             console.error('Error generating temporal city:', error);
             this.showStatus('Error generating temporal city: ' + error.message, 'error');
         }
     }
-
+    
     async simulateTemporalCity(population, citySize) {
         // Simulate temporal city evolution
         const temporalData = {
@@ -772,7 +955,7 @@ class MetroCityGenerator {
                 total_years: 1500
             }
         };
-
+        
         // Create timeline with different eras
         const eras = [
             { name: "Founding", start: 0, end: 50, population: [100, 1000] },
@@ -780,46 +963,46 @@ class MetroCityGenerator {
             { name: "Expansion", start: 200, end: 500, population: [10000, 50000] },
             { name: "Modernization", start: 500, end: 1500, population: [50000, population] }
         ];
-
+        
         // Generate timeline points
         for (let year = 0; year <= 1500; year += 50) {
             const era = eras.find(e => year >= e.start && year < e.end) || eras[eras.length - 1];
             const progress = (year - era.start) / (era.end - era.start);
             const eraPopulation = Math.floor(era.population[0] + (era.population[1] - era.population[0]) * progress);
             const actualPopulation = Math.min(eraPopulation, population);
-
+            
             // Generate city state for this year
             const cityState = await this.generateCityStateForYear(year, actualPopulation, citySize, era.name);
             temporalData.timeline.push(cityState);
         }
-
+        
         // Generate key points
         temporalData.key_points = this.generateKeyPoints(temporalData.timeline);
-
+        
         // Generate Roman grid
         temporalData.roman_grid = this.generateRomanGrid(citySize);
-
+        
         return temporalData;
     }
-
+    
     async generateCityStateForYear(year, population, citySize, era) {
         const rng = this.seedGenerator.getRNG(`temporal.${year}`);
-
+        
         // Calculate city area based on population
         const area = Math.max(1, population / 5000); // 5000 people per km²
-
+        
         // Generate districts based on era
         const districts = this.generateDistrictsForEra(era, population, citySize, rng);
-
+        
         // Generate zones
         const zones = this.generateZonesForEra(era, districts, rng);
-
+        
         // Generate infrastructure
         const infrastructure = this.generateInfrastructureForEra(era, citySize, rng);
-
+        
         // Generate services
         const services = this.generateServicesForEra(era, population, citySize, rng);
-
+        
         return {
             year: year,
             population: population,
@@ -831,26 +1014,26 @@ class MetroCityGenerator {
             era: era
         };
     }
-
+    
     generateDistrictsForEra(era, population, citySize, rng) {
         const districts = [];
         const numDistricts = Math.max(1, Math.floor(population / 5000));
-
+        
         for (let i = 0; i < numDistricts; i++) {
             const x = rng.uniform(0, citySize);
             const y = rng.uniform(0, citySize);
             const size = rng.uniform(0.5, 2.0);
-
+            
             let districtType = 'mixed';
             if (era === 'Growth' || era === 'Expansion') {
                 districtType = rng.choice(['residential', 'commercial', 'mixed']);
             } else if (era === 'Modernization') {
                 districtType = rng.choice(['residential', 'commercial', 'industrial', 'mixed', 'park']);
             }
-
+            
             // Generate shape based on era and type
             const shape = this.generateDistrictShape(era, districtType, size, rng);
-
+            
             districts.push({
                 id: `district_${i}`,
                 name: `${districtType.charAt(0).toUpperCase() + districtType.slice(1)} District ${i + 1}`,
@@ -860,7 +1043,7 @@ class MetroCityGenerator {
                 population: Math.floor(population / numDistricts)
             });
         }
-
+        
         return districts;
     }
 
@@ -868,7 +1051,7 @@ class MetroCityGenerator {
         // Shape evolution based on era and district type
         const shapeTypes = ['rectangle', 'circle', 'polygon'];
         let shapeType = 'rectangle';
-
+        
         if (era === 'Founding') {
             // Early cities use simple rectangular blocks
             shapeType = 'rectangle';
@@ -898,7 +1081,7 @@ class MetroCityGenerator {
                 shapeType = rng.choice(shapeTypes);
             }
         }
-
+        
         // Generate shape-specific parameters
         switch (shapeType) {
             case 'circle':
@@ -928,7 +1111,7 @@ class MetroCityGenerator {
                 };
         }
     }
-
+    
     generateZonesForEra(era, districts, rng) {
         const zones = {
             residential: { count: 0, area: 0, population: 0 },
@@ -937,7 +1120,7 @@ class MetroCityGenerator {
             mixed: { count: 0, area: 0, population: 0 },
             park: { count: 0, area: 0, population: 0 }
         };
-
+        
         districts.forEach(district => {
             const zoneType = district.type;
             if (zones[zoneType]) {
@@ -946,13 +1129,13 @@ class MetroCityGenerator {
                 zones[zoneType].population += district.population;
             }
         });
-
+        
         return zones;
     }
-
+    
     generateInfrastructureForEra(era, citySize, rng) {
         const infrastructure = [];
-
+        
         if (era === 'Founding') {
             // Roman grid roads
             infrastructure.push({
@@ -991,7 +1174,7 @@ class MetroCityGenerator {
             const centerX = citySize / 2;
             const centerY = citySize / 2;
             const radius = citySize * 0.3;
-
+            
             // Inner ring
             for (let i = 0; i < 8; i++) {
                 const angle1 = (i * 2 * Math.PI) / 8;
@@ -1000,7 +1183,7 @@ class MetroCityGenerator {
                 const y1 = centerY + radius * Math.sin(angle1);
                 const x2 = centerX + radius * Math.cos(angle2);
                 const y2 = centerY + radius * Math.sin(angle2);
-
+                
                 infrastructure.push({
                     type: 'road',
                     x1: x1, y1: y1, x2: x2, y2: y2,
@@ -1008,18 +1191,18 @@ class MetroCityGenerator {
                 });
             }
         }
-
+        
         return infrastructure;
     }
-
+    
     generateServicesForEra(era, population, citySize, rng) {
         const services = [];
         const numServices = Math.max(1, Math.floor(population / 10000));
-
+        
         for (let i = 0; i < numServices; i++) {
             const x = rng.uniform(0, citySize);
             const y = rng.uniform(0, citySize);
-
+            
             let serviceType = 'hospital';
             if (era === 'Founding') {
                 serviceType = rng.choice(['market', 'temple']);
@@ -1030,7 +1213,7 @@ class MetroCityGenerator {
             } else {
                 serviceType = rng.choice(['hospital', 'school', 'police', 'fire', 'monument', 'airport', 'stadium']);
             }
-
+            
             services.push({
                 id: `service_${i}`,
                 type: serviceType,
@@ -1038,13 +1221,13 @@ class MetroCityGenerator {
                 importance: rng.randint(1, 5)
             });
         }
-
+        
         return services;
     }
-
+    
     generateKeyPoints(timeline) {
         const keyPoints = [];
-
+        
         // Add key points that appear at different times
         const keyPointData = [
             { name: "Central Forum", type: "market", year: 0, importance: 5 },
@@ -1056,7 +1239,7 @@ class MetroCityGenerator {
             { name: "University Campus", type: "government", year: 1000, importance: 4 },
             { name: "Airport", type: "transport", year: 1200, importance: 3 }
         ];
-
+        
         keyPointData.forEach(point => {
             keyPoints.push({
                 id: `keypoint_${point.name.toLowerCase().replace(/\s+/g, '_')}`,
@@ -1068,14 +1251,14 @@ class MetroCityGenerator {
                 y: Math.random() * 10
             });
         });
-
+        
         return keyPoints;
     }
-
+    
     generateRomanGrid(citySize) {
         const centerX = citySize / 2;
         const centerY = citySize / 2;
-
+        
         return {
             cardos: [
                 [centerX - 10, 0, centerX + 10, citySize] // Main cardo
@@ -1086,50 +1269,50 @@ class MetroCityGenerator {
             blocks: []
         };
     }
-
+    
     renderTemporalCity() {
         if (!this.temporalData) return;
-
+        
         // Find city state for current year
         const cityState = this.temporalData.timeline.find(state => state.year === this.currentYear);
         if (!cityState) return;
-
+        
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+        
         // Draw background
         this.ctx.fillStyle = '#f0f0f0';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
+        
         // Draw districts
         this.drawTemporalDistricts(cityState.districts);
-
+        
         // Draw infrastructure
         this.drawTemporalInfrastructure(cityState.infrastructure);
-
+        
         // Draw services
         this.drawTemporalServices(cityState.services);
-
+        
         // Draw key points that exist at this time
         const currentKeyPoints = this.temporalData.key_points.filter(point => point.year <= this.currentYear);
         this.drawTemporalKeyPoints(currentKeyPoints);
-
+        
         // Draw legend
         this.drawLegend();
-
+        
         // Draw timeline info
         this.drawTimelineInfo(cityState);
     }
-
+    
     drawTemporalDistricts(districts) {
         const ctx = this.ctx;
         const canvas = this.canvas;
-
+        
         districts.forEach(district => {
             const x = (district.x / 10) * canvas.width;
             const y = (district.y / 10) * canvas.height;
             const size = (district.size / 10) * Math.min(canvas.width, canvas.height);
-
+            
             // District color based on type
             const colors = {
                 residential: '#4ecdc4',
@@ -1138,9 +1321,9 @@ class MetroCityGenerator {
                 mixed: '#96ceb4',
                 park: '#90EE90'
             };
-
+            
             ctx.fillStyle = colors[district.type] || '#96ceb4';
-
+            
             // Draw based on shape type
             if (district.shape) {
                 this.drawDistrictShape(ctx, district.shape, x, y, size);
@@ -1148,12 +1331,12 @@ class MetroCityGenerator {
                 // Fallback to rectangle for backward compatibility
                 ctx.fillRect(x - size / 2, y - size / 2, size, size);
             }
-
+            
             // District border
             ctx.strokeStyle = '#333';
             ctx.lineWidth = 2;
             this.strokeDistrictShape(ctx, district.shape, x, y, size);
-
+            
             // District label
             ctx.fillStyle = '#333';
             ctx.font = '10px Arial';
@@ -1184,14 +1367,14 @@ class MetroCityGenerator {
                 const polyRadius = (shape.radius / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
                 const sides = shape.sides || 6;
                 const rotation = shape.rotation || 0;
-
+                
                 ctx.rotate(rotation);
                 ctx.beginPath();
                 for (let i = 0; i < sides; i++) {
                     const angle = (i * 2 * Math.PI) / sides;
                     const px = shape.centerX + polyRadius * Math.cos(angle);
                     const py = shape.centerY + polyRadius * Math.sin(angle);
-
+                    
                     if (i === 0) {
                         ctx.moveTo(px, py);
                     } else {
@@ -1235,14 +1418,14 @@ class MetroCityGenerator {
                 const polyRadius = (shape.radius / 10) * Math.min(ctx.canvas.width, ctx.canvas.height);
                 const sides = shape.sides || 6;
                 const rotation = shape.rotation || 0;
-
+                
                 ctx.rotate(rotation);
                 ctx.beginPath();
                 for (let i = 0; i < sides; i++) {
                     const angle = (i * 2 * Math.PI) / sides;
                     const px = shape.centerX + polyRadius * Math.cos(angle);
                     const py = shape.centerY + polyRadius * Math.sin(angle);
-
+                    
                     if (i === 0) {
                         ctx.moveTo(px, py);
                     } else {
@@ -1263,18 +1446,18 @@ class MetroCityGenerator {
 
         ctx.restore();
     }
-
+    
     drawTemporalInfrastructure(infrastructure) {
         const ctx = this.ctx;
         const canvas = this.canvas;
-
+        
         infrastructure.forEach(road => {
             const x1 = (road.x1 / 10) * canvas.width;
             const y1 = (road.y1 / 10) * canvas.height;
             const x2 = (road.x2 / 10) * canvas.width;
             const y2 = (road.y2 / 10) * canvas.height;
             const width = Math.max(2, (road.width / 10) * Math.min(canvas.width, canvas.height));
-
+            
             ctx.strokeStyle = '#666';
             ctx.lineWidth = width;
             ctx.lineCap = 'round';
@@ -1284,16 +1467,16 @@ class MetroCityGenerator {
             ctx.stroke();
         });
     }
-
+    
     drawTemporalServices(services) {
         const ctx = this.ctx;
         const canvas = this.canvas;
-
+        
         services.forEach(service => {
             const x = (service.x / 10) * canvas.width;
             const y = (service.y / 10) * canvas.height;
             const size = 8;
-
+            
             // Service color and symbol
             const serviceStyles = {
                 hospital: { color: '#ff0000', symbol: '✚' },
@@ -1306,25 +1489,25 @@ class MetroCityGenerator {
                 government: { color: '#800080', symbol: '◆' },
                 transport: { color: '#00bfff', symbol: '●' }
             };
-
+            
             const style = serviceStyles[service.type] || { color: '#666', symbol: '●' };
-
+            
             ctx.fillStyle = style.color;
             ctx.font = `${size * 2}px Arial`;
             ctx.textAlign = 'center';
             ctx.fillText(style.symbol, x, y + size / 2);
         });
     }
-
+    
     drawTemporalKeyPoints(keyPoints) {
         const ctx = this.ctx;
         const canvas = this.canvas;
-
+        
         keyPoints.forEach(point => {
             const x = (point.x / 10) * canvas.width;
             const y = (point.y / 10) * canvas.height;
             const size = 12;
-
+            
             // Key point color and symbol
             const pointStyles = {
                 market: { color: '#FFD700', symbol: '●' },
@@ -1332,14 +1515,14 @@ class MetroCityGenerator {
                 government: { color: '#800080', symbol: '◆' },
                 transport: { color: '#00bfff', symbol: '●' }
             };
-
+            
             const style = pointStyles[point.type] || { color: '#666', symbol: '★' };
-
+            
             ctx.fillStyle = style.color;
             ctx.font = `${size * 2}px Arial`;
             ctx.textAlign = 'center';
             ctx.fillText(style.symbol, x, y + size / 2);
-
+            
             // Importance indicator
             if (point.importance >= 4) {
                 ctx.strokeStyle = '#ff0000';
@@ -1350,43 +1533,43 @@ class MetroCityGenerator {
             }
         });
     }
-
+    
     drawTimelineInfo(cityState) {
         const ctx = this.ctx;
         const canvas = this.canvas;
-
+        
         // Timeline info box
         const infoX = 20;
         const infoY = 20;
         const infoWidth = 300;
         const infoHeight = 120;
-
+        
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.fillRect(infoX, infoY, infoWidth, infoHeight);
-
+        
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         ctx.strokeRect(infoX, infoY, infoWidth, infoHeight);
-
+        
         // Timeline text
         ctx.fillStyle = '#333';
         ctx.font = 'bold 16px Arial';
         ctx.textAlign = 'left';
         ctx.fillText(`Year: ${cityState.year} AD`, infoX + 10, infoY + 25);
-
+        
         ctx.font = '14px Arial';
         ctx.fillText(`Era: ${cityState.era}`, infoX + 10, infoY + 45);
         ctx.fillText(`Population: ${cityState.population.toLocaleString()}`, infoX + 10, infoY + 65);
         ctx.fillText(`Area: ${cityState.area.toFixed(1)} km²`, infoX + 10, infoY + 85);
         ctx.fillText(`Districts: ${cityState.districts.length}`, infoX + 10, infoY + 105);
     }
-
+    
     updateTemporalCityInfo() {
         if (!this.temporalData) return;
-
+        
         const cityState = this.temporalData.timeline.find(state => state.year === this.currentYear);
         if (!cityState) return;
-
+        
         // Update city info display safely
         this.updateElement('cityPopulation', cityState.population.toLocaleString());
         this.updateElement('cityArea', cityState.area.toFixed(1));
@@ -1396,11 +1579,11 @@ class MetroCityGenerator {
         this.updateElement('cityMasterSeed', this.temporalData.metadata.master_seed);
         this.updateElement('cityGeneratedAt', new Date().toLocaleString());
     }
-
+    
     togglePlayPause() {
         const playPauseBtn = document.getElementById('playPauseBtn');
         const timelineSlider = document.getElementById('timelineSlider');
-
+        
         if (this.isPlaying) {
             // Stop playing
             this.isPlaying = false;
@@ -1413,11 +1596,11 @@ class MetroCityGenerator {
             // Start playing
             this.isPlaying = true;
             playPauseBtn.textContent = 'Pause';
-
+            
             this.playInterval = setInterval(() => {
                 const currentValue = parseInt(timelineSlider.value);
                 const maxValue = parseInt(timelineSlider.max);
-
+                
                 if (currentValue >= maxValue) {
                     // Reached end, stop playing
                     this.togglePlayPause();

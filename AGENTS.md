@@ -49,3 +49,180 @@ Once a task is started and a Github Issue is created the following steps in the 
 6. Wait for verification github action to complete.  If the action fails, analyze failure treating that failure like a local test failure and return to step 3.
 7. When previous closing steps are complete, update the GitHub issue with what was accomplished.
 
+# Debugging Guide
+
+This section provides comprehensive debugging information for common issues in the Metro project.
+
+## Common Issues and Solutions
+
+### 1. JavaScript Errors in Web Interface
+
+**Problem**: JavaScript errors in the browser console, especially related to data structure handling.
+
+**Symptoms**:
+- `infrastructure.services.forEach is not a function`
+- `Cannot read properties of undefined`
+- `TypeError: services.forEach is not a function`
+
+**Debugging Steps**:
+1. **Check Browser Console**: Open Developer Tools (F12) and look for JavaScript errors
+2. **Run JavaScript Unit Tests**: `npm run test:js` - these tests specifically catch data structure issues
+3. **Check Data Structure**: Verify that API responses match expected format
+4. **Test Fallback Mode**: The web interface has client-side fallback when backend API is unavailable
+
+**Solutions**:
+- Ensure all rendering functions handle both array and object data formats
+- Add null/undefined checks before calling array methods
+- Use the data structure validation tests to prevent regressions
+
+### 2. API Endpoint Issues (405 Method Not Allowed)
+
+**Problem**: Web interface shows 405 errors when trying to call backend API.
+
+**Symptoms**:
+- `HTTP error! status: 405` in browser console
+- City generation fails with API errors
+- "Backend API not available" warning messages
+
+**Debugging Steps**:
+1. **Check Hosting Type**: Determine if site is hosted on static hosting (GitHub Pages) or dynamic hosting
+2. **Test API Endpoint**: `curl -I -X POST https://your-site.com/api/simulate-city`
+3. **Check Fallback**: Verify client-side generation works when API is unavailable
+
+**Solutions**:
+- For static hosting: Ensure client-side fallback is working
+- For dynamic hosting: Check that Flask server is running and accessible
+- Update deployment configuration to support backend APIs if needed
+
+### 3. Python Backend Issues
+
+**Problem**: Flask server errors or missing dependencies.
+
+**Symptoms**:
+- `ModuleNotFoundError: No module named 'flask'`
+- Server fails to start
+- API endpoints return 500 errors
+
+**Debugging Steps**:
+1. **Check Virtual Environment**: Ensure you're using the project's virtual environment
+2. **Install Dependencies**: `pip install -e ".[dev,test]"`
+3. **Check Server Logs**: Look for error messages in Flask output
+4. **Test API Locally**: `curl -X POST http://localhost:5000/api/simulate-city`
+
+**Solutions**:
+- Create and activate virtual environment: `python3 -m venv venv && source venv/bin/activate`
+- Install all dependencies: `pip install -e ".[dev,test]"`
+- Check Python version compatibility (requires Python 3.8+)
+
+### 4. Test Failures
+
+**Problem**: Tests failing during development or CI/CD.
+
+**Symptoms**:
+- Unit tests fail with specific error messages
+- Integration tests timeout or fail
+- Coverage reports show missing coverage
+
+**Debugging Steps**:
+1. **Run Tests Locally**: `./run_checks.sh` to see all test results
+2. **Check Specific Test Types**:
+   - Python tests: `python -m pytest tests/ -v`
+   - JavaScript tests: `npm run test:js`
+   - UI tests: `npm run test:ui`
+3. **Check Test Environment**: Ensure all dependencies are installed
+4. **Review Test Logs**: Look for specific error messages and stack traces
+
+**Solutions**:
+- Fix failing tests before committing
+- Add missing test cases for new functionality
+- Update test data when APIs change
+- Ensure test environment matches production
+
+### 5. Docker Container Issues
+
+**Problem**: Commands fail when run in Docker container.
+
+**Symptoms**:
+- `docker build` fails
+- Container commands timeout
+- Permission errors in container
+
+**Debugging Steps**:
+1. **Check Dockerfile**: Ensure all dependencies are properly installed
+2. **Test Container Build**: `docker build -t metro-test .`
+3. **Run Container Interactively**: `docker run -it metro-test /bin/bash`
+4. **Check Volume Mounts**: Ensure project directory is properly mounted
+
+**Solutions**:
+- Update Dockerfile with missing dependencies
+- Fix permission issues in container
+- Ensure proper volume mounting for development
+
+## Debugging Tools and Commands
+
+### Essential Commands
+```bash
+# Run all validation checks
+./run_checks.sh
+
+# Run specific test suites
+python -m pytest tests/ -v                    # Python tests
+npm run test:js                               # JavaScript unit tests
+npm run test:ui                               # UI tests
+npm run test:live                             # Live site tests
+
+# Start development server
+python run_webapp.py                          # Flask backend
+# Open browser to http://localhost:5000
+
+# Docker debugging
+docker build -t metro-test .
+docker run -it metro-test /bin/bash
+```
+
+### Browser Debugging
+1. **Developer Tools**: F12 to open browser dev tools
+2. **Console Tab**: Check for JavaScript errors
+3. **Network Tab**: Monitor API calls and responses
+4. **Sources Tab**: Set breakpoints in JavaScript code
+
+### Log Analysis
+- **Flask Logs**: Check terminal output when running `python run_webapp.py`
+- **Test Logs**: Review test output for specific failure messages
+- **CI/CD Logs**: Check GitHub Actions logs for build failures
+
+## Prevention Strategies
+
+### 1. Comprehensive Testing
+- **Unit Tests**: Test individual functions in isolation
+- **Integration Tests**: Test component interactions
+- **UI Tests**: Test full user workflows
+- **Live Site Tests**: Test deployed application
+
+### 2. Data Validation
+- **Input Validation**: Check all user inputs
+- **API Response Validation**: Ensure consistent data formats
+- **Error Handling**: Graceful degradation when things fail
+
+### 3. Monitoring and Logging
+- **Console Logging**: Use `console.log()` for debugging
+- **Error Tracking**: Implement proper error handling
+- **Performance Monitoring**: Track loading times and errors
+
+### 4. Documentation
+- **Code Comments**: Explain complex logic
+- **API Documentation**: Document all endpoints
+- **Troubleshooting Guides**: This debugging guide
+
+## Getting Help
+
+If you encounter issues not covered in this guide:
+
+1. **Check Recent Changes**: Look at recent commits for breaking changes
+2. **Review Issues**: Check GitHub issues for similar problems
+3. **Test in Isolation**: Create minimal test cases to isolate the problem
+4. **Check Dependencies**: Ensure all required packages are installed
+5. **Verify Environment**: Make sure development environment matches requirements
+
+Remember: The goal is to create a robust, maintainable system that gracefully handles errors and provides clear feedback when things go wrong.
+
